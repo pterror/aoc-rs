@@ -82,10 +82,30 @@ pub fn p2() -> Result<()> {
             }
         }
     }
+    {
+        let mut i = i;
+        let mut j = j;
+        let mut dir = (-1, 0);
+        loop {
+            let c = xs[i as usize][j as usize];
+            if c == '#' {
+                i -= dir.0;
+                j -= dir.1;
+                dir = (dir.1, -dir.0);
+            } else if c != 'X' {
+                xs[i as usize][j as usize] = 'X';
+            }
+            i += dir.0;
+            j += dir.1;
+            if i < 0 || j < 0 || (i as usize) >= xs.len() || (j as usize) >= xs[0].len() {
+                break;
+            }
+        }
+    }
     for i2 in 0..xs.len() {
         for j2 in 0..xs[0].len() {
             let c = xs[i2][j2];
-            if c == '#' || c == '^' {
+            if c != 'X' {
                 continue;
             }
             xs[i2][j2] = '#';
