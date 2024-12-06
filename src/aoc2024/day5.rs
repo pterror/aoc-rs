@@ -5,7 +5,7 @@ use anyhow::Result;
 use crate::util::{read_file, to, CollectResult, CollectVec};
 
 fn parse() -> Result<(Vec<(usize, usize)>, Vec<Vec<usize>>)> {
-    let file = read_file("inputs/day5.txt")?;
+    let file = read_file!("inputs/aoc2024/day5.txt")?;
     let what = file.split("\n\n").collect_vec();
     let a = what[0];
     let b = what[1];

@@ -5,7 +5,7 @@ use anyhow::Result;
 use crate::util::read_lines;
 
 fn parse() -> Result<Vec<Vec<char>>> {
-    let lines = read_lines("inputs/day6.txt")?;
+    let lines = read_lines!("inputs/aoc2024/day6.txt")?;
     Ok(lines.iter().map(|x| x.chars().collect()).collect())
 }
 

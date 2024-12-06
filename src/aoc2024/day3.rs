@@ -4,7 +4,7 @@ use regex::Regex;
 use crate::util::read_file;
 
 fn parse() -> Result<String> {
-    let str = read_file("inputs/day3.txt")?;
+    let str = read_file!("inputs/aoc2024/day3.txt")?;
     Ok(str)
 }
 

@@ -3,7 +3,7 @@ use anyhow::Result;
 use crate::util::{read_lines, CollectVec};
 
 fn parse() -> Result<(Vec<usize>, Vec<usize>)> {
-    let lines = read_lines("inputs/day1.txt")?;
+    let lines = read_lines!("inputs/aoc2024/day1.txt")?;
     let mut a = Vec::<usize>::new();
     let mut b = Vec::<usize>::new();
     for line in lines {

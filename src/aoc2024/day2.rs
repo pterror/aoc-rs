@@ -3,7 +3,7 @@ use anyhow::Result;
 use crate::util::{read_lines, to, CollectResult};
 
 fn parse() -> Result<Vec<Vec<isize>>> {
-    let lines = read_lines("inputs/day2.txt")?;
+    let lines = read_lines!("inputs/aoc2024/day2.txt")?;
     let result = lines
         .iter()
         .map(|line| line.split(" ").map(to::<isize>).collect_result());

@@ -3,7 +3,7 @@ use anyhow::Result;
 use crate::util::read_lines;
 
 fn parse() -> Result<Vec<String>> {
-    let lines = read_lines("inputs/day7.txt")?;
+    let lines = read_lines!("inputs/aoc2024/day7.txt")?;
     Ok(lines)
 }
 
