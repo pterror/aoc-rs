@@ -82,37 +82,26 @@ pub fn p2() -> Result<()> {
             }
         }
     }
-    {
-        let mut i = i;
-        let mut j = j;
-        let mut dir = (-1, 0);
-        loop {
-            let c = xs[i as usize][j as usize];
-            if c == '#' {
-                i -= dir.0;
-                j -= dir.1;
-                dir = (dir.1, -dir.0);
-            } else if c != 'X' {
-                xs[i as usize][j as usize] = 'X';
-            }
-            i += dir.0;
-            j += dir.1;
-            if i < 0 || j < 0 || (i as usize) >= xs.len() || (j as usize) >= xs[0].len() {
-                break;
-            }
-        }
-    }
-    for i2 in 0..xs.len() {
-        for j2 in 0..xs[0].len() {
-            let c = xs[i2][j2];
-            if c != 'X' {
-                continue;
-            }
-            xs[i2][j2] = '#';
+    let mut i2 = i;
+    let mut j2 = j;
+    let mut dir = (-1, 0);
+    loop {
+        let c = xs[i2 as usize][j2 as usize];
+        if c == '#' {
+            i2 -= dir.0;
+            j2 -= dir.1;
+            dir = (dir.1, -dir.0);
+        } else if c != 'X' {
+            xs[i2 as usize][j2 as usize] = '#';
             if is_loop(&xs, i, j) {
                 count += 1;
             }
-            xs[i2][j2] = '.';
+            xs[i2 as usize][j2 as usize] = 'X';
+        }
+        i2 += dir.0;
+        j2 += dir.1;
+        if i2 < 0 || j2 < 0 || (i2 as usize) >= xs.len() || (j2 as usize) >= xs[0].len() {
+            break;
         }
     }
     println!("{count}");
