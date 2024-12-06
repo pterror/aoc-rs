@@ -23,3 +23,23 @@ where
 {
     Ok(str.parse()?)
 }
+
+pub trait CollectVec<T> {
+    fn collect_vec(self) -> Vec<T>;
+}
+
+impl<T, U: Iterator<Item = T>> CollectVec<T> for U {
+    fn collect_vec(self) -> Vec<T> {
+        self.collect::<Vec<_>>()
+    }
+}
+
+pub trait CollectResult<T> {
+    fn collect_result(self) -> Result<Vec<T>>;
+}
+
+impl<T, U: Iterator<Item = Result<T>>> CollectResult<T> for U {
+    fn collect_result(self) -> Result<Vec<T>> {
+        self.collect::<Result<_>>()
+    }
+}

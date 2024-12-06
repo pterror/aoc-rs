@@ -1,15 +1,13 @@
 use anyhow::Result;
 
-use crate::util::{read_lines, to};
+use crate::util::{read_lines, to, CollectResult};
 
 fn parse() -> Result<Vec<Vec<isize>>> {
     let lines = read_lines("inputs/day2.txt")?;
-    let result = lines.iter().map(|line| {
-        line.split(" ")
-            .map(to::<isize>)
-            .collect::<Result<Vec<isize>>>()
-    });
-    Ok(result.collect::<Result<Vec<Vec<isize>>>>()?)
+    let result = lines
+        .iter()
+        .map(|line| line.split(" ").map(to::<isize>).collect_result());
+    Ok(result.collect_result()?)
 }
 
 pub fn p1() -> Result<()> {

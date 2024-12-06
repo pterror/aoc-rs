@@ -2,24 +2,24 @@ use std::{cmp::Ordering, collections::HashSet};
 
 use anyhow::Result;
 
-use crate::util::{read_file, to};
+use crate::util::{read_file, to, CollectResult, CollectVec};
 
 fn parse() -> Result<(Vec<(usize, usize)>, Vec<Vec<usize>>)> {
     let file = read_file("inputs/day5.txt")?;
-    let what = file.split("\n\n").collect::<Vec<_>>();
+    let what = file.split("\n\n").collect_vec();
     let a = what[0];
     let b = what[1];
     let a = a
         .lines()
-        .map(|l| -> Result<_> {
-            let x = l.split("|").collect::<Vec<_>>();
+        .map(|l| {
+            let x = l.split("|").collect_vec();
             Ok((x[0].parse::<usize>()?, x[1].parse::<usize>()?))
         })
-        .collect::<Result<Vec<_>>>()?;
+        .collect_result()?;
     let b = b
         .lines()
-        .map(|l| l.split(",").map(to::<usize>).collect::<Result<_>>())
-        .collect::<Result<_>>()?;
+        .map(|l| l.split(",").map(to::<usize>).collect_result())
+        .collect_result()?;
     Ok((a, b))
 }
 

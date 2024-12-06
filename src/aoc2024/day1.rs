@@ -1,13 +1,13 @@
 use anyhow::Result;
 
-use crate::util::read_lines;
+use crate::util::{read_lines, CollectVec};
 
 fn parse() -> Result<(Vec<usize>, Vec<usize>)> {
     let lines = read_lines("inputs/day1.txt")?;
     let mut a = Vec::<usize>::new();
     let mut b = Vec::<usize>::new();
     for line in lines {
-        let nums = line.split("   ").collect::<Vec<_>>();
+        let nums = line.split("   ").collect_vec();
         a.push(nums[0].parse()?);
         b.push(nums[1].parse()?);
     }
