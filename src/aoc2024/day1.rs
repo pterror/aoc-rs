@@ -14,7 +14,7 @@ fn parse() -> Result<(Vec<usize>, Vec<usize>)> {
     return Ok((a, b));
 }
 
-pub fn p1() -> Result<()> {
+pub fn p1() -> Result<String> {
     let (mut a, mut b) = parse()?;
     a.sort();
     b.sort();
@@ -22,17 +22,15 @@ pub fn p1() -> Result<()> {
     for (a, b) in a.iter().zip(b) {
         sum += a.abs_diff(b);
     }
-    println!("{sum}");
-    Ok(())
+    Ok(format!("{sum}"))
 }
 
-pub fn p2() -> Result<()> {
+pub fn p2() -> Result<String> {
     let (mut a, b) = parse()?;
     a.sort();
     let mut sum = 0usize;
     for a in a.iter() {
         sum += a * b.iter().filter(|b| a == *b).count();
     }
-    println!("{sum}");
-    Ok(())
+    Ok(format!("{sum}"))
 }

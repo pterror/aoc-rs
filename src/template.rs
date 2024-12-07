@@ -7,14 +7,12 @@ fn parse() -> Result<Vec<String>> {
     Ok(lines)
 }
 
-pub fn p1() -> Result<()> {
+pub fn p1() -> Result<String> {
     let xs = parse()?;
-    println!("{xs:?}");
-    Ok(())
+    Ok(format!("{xs:?}"))
 }
 
-pub fn p2() -> Result<()> {
+pub fn p2() -> Result<String> {
     let xs = parse()?;
-    println!("{xs:?}");
-    Ok(())
+    Ok(format!("{xs:?}"))
 }

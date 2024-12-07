@@ -8,18 +8,17 @@ fn parse() -> Result<String> {
     Ok(str)
 }
 
-pub fn p1() -> Result<()> {
+pub fn p1() -> Result<String> {
     let xs = parse()?;
     let pat = Regex::new(r"mul\((\d+),(\d+)\)")?;
     let mut total = 0isize;
     for instr in pat.captures_iter(xs.as_str()) {
         total += instr[1].parse::<isize>()? * instr[2].parse::<isize>()?;
     }
-    println!("{total}");
-    Ok(())
+    Ok(format!("{total}"))
 }
 
-pub fn p2() -> Result<()> {
+pub fn p2() -> Result<String> {
     let xs = parse()?;
     let pat = Regex::new(r"mul\((\d+),(\d+)\)|do\(\)|don't\(\)")?;
     let mut enabled = true;
@@ -33,6 +32,5 @@ pub fn p2() -> Result<()> {
             total += instr[1].parse::<isize>()? * instr[2].parse::<isize>()?;
         }
     }
-    println!("{total}");
-    Ok(())
+    Ok(format!("{total}"))
 }

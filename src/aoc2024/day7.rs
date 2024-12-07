@@ -28,7 +28,7 @@ fn any_sum(a: usize, ops: &Vec<usize>, acc: usize, idx: usize) -> bool {
     }
 }
 
-pub fn p1() -> Result<()> {
+pub fn p1() -> Result<String> {
     let xs = parse()?;
     let mut sum = 0;
     for (total, ops) in xs {
@@ -36,8 +36,7 @@ pub fn p1() -> Result<()> {
             sum += total;
         }
     }
-    println!("{sum}");
-    Ok(())
+    Ok(format!("{sum}"))
 }
 
 fn any_sum_2(a: usize, ops: &Vec<usize>, acc: usize, idx: usize) -> bool {
@@ -54,7 +53,7 @@ fn any_sum_2(a: usize, ops: &Vec<usize>, acc: usize, idx: usize) -> bool {
     }
 }
 
-pub fn p2() -> Result<()> {
+pub fn p2() -> Result<String> {
     let xs = parse()?;
     let mut sum = 0;
     for (total, ops) in xs {
@@ -62,6 +61,5 @@ pub fn p2() -> Result<()> {
             sum += total;
         }
     }
-    println!("{sum}");
-    Ok(())
+    Ok(format!("{sum}"))
 }

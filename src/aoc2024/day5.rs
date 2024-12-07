@@ -23,7 +23,7 @@ fn parse() -> Result<(Vec<(usize, usize)>, Vec<Vec<usize>>)> {
     Ok((a, b))
 }
 
-pub fn p1() -> Result<()> {
+pub fn p1() -> Result<String> {
     let (rules, books) = parse()?;
     let mut sum = 0;
     'outer: for book in books {
@@ -36,11 +36,10 @@ pub fn p1() -> Result<()> {
         }
         sum += book[book.len() / 2];
     }
-    println!("{sum}");
-    Ok(())
+    Ok(format!("{sum}"))
 }
 
-pub fn p2() -> Result<()> {
+pub fn p2() -> Result<String> {
     let (rules, books) = parse()?;
     let rules_map = rules.iter().collect::<HashSet<_>>();
     let mut sum = 0;
@@ -60,6 +59,5 @@ pub fn p2() -> Result<()> {
         }
         sum += sorted[sorted.len() / 2];
     }
-    println!("{sum}");
-    Ok(())
+    Ok(format!("{sum}"))
 }

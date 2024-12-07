@@ -12,7 +12,7 @@ fn get(xs: &Vec<String>, i: usize, di: isize, j: usize, dj: isize) -> Option<cha
     Some(line.chars().nth(((j as isize) + dj) as usize)?)
 }
 
-pub fn p1() -> Result<()> {
+pub fn p1() -> Result<String> {
     let xs = parse()?;
     let mut count = 0;
     for (i, line) in xs.iter().enumerate() {
@@ -70,11 +70,10 @@ pub fn p1() -> Result<()> {
             }
         }
     }
-    println!("{count}");
-    Ok(())
+    Ok(format!("{count}"))
 }
 
-pub fn p2() -> Result<()> {
+pub fn p2() -> Result<String> {
     let xs = parse()?;
     let mut count = 0;
     for (i, line) in xs.iter().enumerate() {
@@ -97,6 +96,5 @@ pub fn p2() -> Result<()> {
             }
         }
     }
-    println!("{count}");
-    Ok(())
+    Ok(format!("{count}"))
 }

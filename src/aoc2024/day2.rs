@@ -10,7 +10,7 @@ fn parse() -> Result<Vec<Vec<isize>>> {
     Ok(result.collect_result()?)
 }
 
-pub fn p1() -> Result<()> {
+pub fn p1() -> Result<String> {
     let xs = parse()?;
     let mut count = 0;
     for x in xs {
@@ -28,11 +28,10 @@ pub fn p1() -> Result<()> {
         }
         count += 1;
     }
-    println!("{count}");
-    Ok(())
+    Ok(format!("{count}"))
 }
 
-pub fn p2() -> Result<()> {
+pub fn p2() -> Result<String> {
     let xs = parse()?;
     let mut count = 0;
     'outer: for x in xs {
@@ -58,6 +57,5 @@ pub fn p2() -> Result<()> {
             continue 'outer;
         }
     }
-    println!("{count}");
-    Ok(())
+    Ok(format!("{count}"))
 }

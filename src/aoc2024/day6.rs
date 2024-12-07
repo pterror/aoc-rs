@@ -9,7 +9,7 @@ fn parse() -> Result<Vec<Vec<char>>> {
     Ok(lines.iter().map(|x| x.chars().collect()).collect())
 }
 
-pub fn p1() -> Result<()> {
+pub fn p1() -> Result<String> {
     let mut xs = parse()?;
     let mut i = 0;
     let mut j = 0;
@@ -40,8 +40,7 @@ pub fn p1() -> Result<()> {
             break;
         }
     }
-    println!("{count}");
-    Ok(())
+    Ok(format!("{count}"))
 }
 
 fn is_loop(xs: &Vec<Vec<char>>, i: i32, j: i32) -> bool {
@@ -68,7 +67,7 @@ fn is_loop(xs: &Vec<Vec<char>>, i: i32, j: i32) -> bool {
     }
 }
 
-pub fn p2() -> Result<()> {
+pub fn p2() -> Result<String> {
     let mut xs = parse()?;
     let mut count = 0;
     let mut i = 0;
@@ -104,6 +103,5 @@ pub fn p2() -> Result<()> {
             break;
         }
     }
-    println!("{count}");
-    Ok(())
+    Ok(format!("{count}"))
 }
