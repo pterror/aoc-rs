@@ -17,12 +17,11 @@ fn parse() -> Result<Vec<(usize, Vec<usize>)>> {
     Ok(a)
 }
 
-fn any_sum(a: usize, ops: &[usize], idx: usize) -> bool {
-    if idx == 0 {
-        a == ops[0]
-    } else {
-        let n = ops[idx];
-        (a >= n && any_sum(a - n, ops, idx - 1)) || (a % n == 0 && any_sum(a / n, ops, idx - 1))
+fn any_sum(a: usize, ops: &[usize]) -> bool {
+    match ops {
+        [] => a == 0,
+        [n] => a == *n,
+        [rest @ .., n] => (a >= *n && any_sum(a - n, rest)) || (a % n == 0 && any_sum(a / n, rest)),
     }
 }
 
@@ -30,24 +29,23 @@ pub fn p1() -> Result<String> {
     let xs = parse()?;
     let mut sum = 0;
     for (total, ops) in xs {
-        if any_sum(total, &ops, ops.len() - 1) {
+        if any_sum(total, &ops) {
             sum += total;
         }
     }
     Ok(format!("{sum}"))
 }
 
-fn any_sum_2(a: usize, ops: &[usize], idx: usize) -> bool {
-    if idx == 0 {
-        a == ops[0]
-    } else {
-        let n = ops[idx];
-        (a >= n && any_sum_2(a - n, ops, idx - 1))
-            || (a % n == 0 && any_sum_2(a / n, ops, idx - 1))
-            || {
+fn any_sum_2(a: usize, ops: &[usize]) -> bool {
+    match ops {
+        [] => a == 0,
+        [n] => a == *n,
+        [rest @ .., n] => {
+            (a >= *n && any_sum_2(a - n, rest)) || (a % n == 0 && any_sum_2(a / n, rest)) || {
                 let modulo = 10usize.pow(n.ilog10() + 1);
-                a % modulo == n && any_sum_2(a / modulo, ops, idx - 1)
+                a % modulo == *n && any_sum_2(a / modulo, rest)
             }
+        }
     }
 }
 
@@ -55,7 +53,7 @@ pub fn p2() -> Result<String> {
     let xs = parse()?;
     let mut sum = 0;
     for (total, ops) in xs {
-        if any_sum_2(total, &ops, ops.len() - 1) {
+        if any_sum_2(total, &ops) {
             sum += total;
         }
     }
