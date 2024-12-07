@@ -13,9 +13,9 @@ pub mod day8;
 
 fn time(day: i32, part: i32, callback: impl FnOnce() -> Result<String>) {
     let start = time::SystemTime::now();
-    let _ = callback();
+    let str = callback().unwrap_or_else(|_| String::from("<error>"));
     let delta = time::SystemTime::now().duration_since(start).unwrap();
-    println!("d{day}p{part}: {delta:?}");
+    println!("d{day}p{part}: {delta:?}\t{str}");
 }
 
 pub fn run_all() {
