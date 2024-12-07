@@ -7,6 +7,7 @@ pub mod day4;
 pub mod day5;
 pub mod day6;
 pub mod day7;
+pub mod day8;
 
 fn time(day: i32, part: i32, callback: impl FnOnce()) {
     print!("d{day}p{part}: ");
@@ -31,4 +32,6 @@ pub fn run_all() {
     time(6, 2, || day6::p2().unwrap());
     time(7, 1, || day7::p1().unwrap());
     time(7, 2, || day7::p2().unwrap());
+    time(8, 1, || day8::p1().unwrap());
+    time(8, 2, || day8::p2().unwrap());
 }
