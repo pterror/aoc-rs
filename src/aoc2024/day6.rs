@@ -43,11 +43,16 @@ pub fn p1() -> Result<String> {
     Ok(format!("{count}"))
 }
 
-fn is_loop(xs: &Vec<Vec<char>>, i: i32, j: i32) -> bool {
+fn is_loop(
+    xs: &Vec<Vec<char>>,
+    i: i32,
+    j: i32,
+    seen: &mut HashSet<(i32, i32, (i32, i32))>,
+) -> bool {
+    seen.drain();
     let mut i = i;
     let mut j = j;
     let mut dir = (-1, 0);
-    let mut seen = HashSet::new();
     loop {
         let c = xs[i as usize][j as usize];
         if c == '#' {
@@ -84,6 +89,7 @@ pub fn p2() -> Result<String> {
     let mut i2 = i;
     let mut j2 = j;
     let mut dir = (-1, 0);
+    let mut seen = HashSet::<(i32, i32, (i32, i32))>::new();
     loop {
         let c = xs[i2 as usize][j2 as usize];
         if c == '#' {
@@ -92,7 +98,7 @@ pub fn p2() -> Result<String> {
             dir = (dir.1, -dir.0);
         } else if c != 'X' {
             xs[i2 as usize][j2 as usize] = '#';
-            if is_loop(&xs, i, j) {
+            if is_loop(&xs, i, j, &mut seen) {
                 count += 1;
             }
             xs[i2 as usize][j2 as usize] = 'X';
