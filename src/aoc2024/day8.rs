@@ -11,37 +11,33 @@ fn parse() -> Result<Vec<Vec<char>>> {
 
 pub fn p1() -> Result<String> {
     let xs = parse()?;
-    let mut locs = HashMap::<char, HashSet<(isize, isize)>>::new();
+    let si = xs.len() as isize;
+    let sj = xs[0].len() as isize;
+    let mut locs = HashMap::<char, Vec<(isize, isize)>>::new();
+    let mut an = HashSet::<(isize, isize)>::new();
     for (i, l) in xs.iter().enumerate() {
         for (j, &c) in l.iter().enumerate() {
+            let i = i as isize;
+            let j = j as isize;
             if c == '.' {
                 continue;
             }
-            locs.entry(c).or_default().insert((i as isize, j as isize));
-        }
-    }
-    let mut an = HashSet::<(isize, isize)>::new();
-    let si = xs.len() as isize;
-    let sj = xs[0].len() as isize;
-    for (_, locs) in locs {
-        for &(ai, aj) in locs.iter() {
-            for &(bi, bj) in locs.iter() {
-                if ai == bi && aj == bj {
-                    continue;
-                }
-                let di = bi - ai;
-                let dj = bj - aj;
+            let others = locs.entry(c).or_default();
+            for &(ai, aj) in others.iter() {
+                let di = i - ai;
+                let dj = j - aj;
                 let i1 = ai - di;
                 let j1 = aj - dj;
                 if i1 >= 0 && i1 < si && j1 >= 0 && j1 < sj {
                     an.insert((i1, j1));
                 }
-                let i2 = bi + di;
-                let j2 = bj + dj;
+                let i2 = i + di;
+                let j2 = j + dj;
                 if i2 >= 0 && i2 < si && j2 >= 0 && j2 < sj {
                     an.insert((i2, j2));
                 }
             }
+            others.push((i, j));
         }
     }
     let count = an.len();
@@ -50,28 +46,23 @@ pub fn p1() -> Result<String> {
 
 pub fn p2() -> Result<String> {
     let xs = parse()?;
-    let mut locs = HashMap::<char, HashSet<(isize, isize)>>::new();
+    let si = xs.len() as isize;
+    let sj = xs[0].len() as isize;
+    let mut locs = HashMap::<char, Vec<(isize, isize)>>::new();
     let mut an = HashSet::<(isize, isize)>::new();
     for (i, l) in xs.iter().enumerate() {
         for (j, &c) in l.iter().enumerate() {
+            let i = i as isize;
+            let j = j as isize;
             if c == '.' {
                 continue;
             }
-            let p = (i as isize, j as isize);
-            locs.entry(c).or_default().insert(p);
+            let p = (i, j);
             an.insert(p);
-        }
-    }
-    let si = xs.len() as isize;
-    let sj = xs[0].len() as isize;
-    for (_, locs) in locs {
-        for &(ai, aj) in locs.iter() {
-            for &(bi, bj) in locs.iter() {
-                if ai == bi && aj == bj {
-                    continue;
-                }
-                let di = ai - bi;
-                let dj = aj - bj;
+            let others = locs.entry(c).or_default();
+            for &(ai, aj) in others.iter() {
+                let di = ai - i;
+                let dj = aj - j;
                 let mut i1 = ai + di;
                 let mut j1 = aj + dj;
                 while i1 >= 0 && i1 < si && j1 >= 0 && j1 < sj {
@@ -79,14 +70,15 @@ pub fn p2() -> Result<String> {
                     i1 += di;
                     j1 += dj;
                 }
-                let mut i2 = bi - di;
-                let mut j2 = bj - dj;
+                let mut i2 = i - di;
+                let mut j2 = j - dj;
                 while i2 >= 0 && i2 < si && j2 >= 0 && j2 < sj {
                     an.insert((i2, j2));
                     i2 -= di;
                     j2 -= dj;
                 }
             }
+            others.push(p);
         }
     }
     let count = an.len();
