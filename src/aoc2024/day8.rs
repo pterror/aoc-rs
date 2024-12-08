@@ -11,89 +11,84 @@ fn parse() -> Result<Vec<Vec<char>>> {
 
 pub fn p1() -> Result<String> {
     let xs = parse()?;
-    let mut locs = HashMap::<char, HashSet<(usize, usize)>>::new();
+    let mut locs = HashMap::<char, HashSet<(isize, isize)>>::new();
     for (i, l) in xs.iter().enumerate() {
         for (j, &c) in l.iter().enumerate() {
             if c == '.' {
                 continue;
             }
-            locs.entry(c).or_default().insert((i, j));
+            locs.entry(c).or_default().insert((i as isize, j as isize));
         }
     }
-    let mut antinodes = HashMap::<char, HashSet<(usize, usize)>>::new();
+    let mut an = HashSet::<(isize, isize)>::new();
     let si = xs.len() as isize;
     let sj = xs[0].len() as isize;
-    for (c, locs) in locs {
-        let an = antinodes.entry(c).or_default();
+    for (_, locs) in locs {
         for &(ai, aj) in locs.iter() {
             for &(bi, bj) in locs.iter() {
                 if ai == bi && aj == bj {
                     continue;
                 }
-                let di = (ai as isize) - (bi as isize);
-                let dj = (aj as isize) - (bj as isize);
-                let p1 = ((ai as isize) + di, (aj as isize) + dj);
-                let p2 = ((bi as isize) - di, (bj as isize) - dj);
-                if p1.0 >= 0 && p1.0 < si && p1.1 >= 0 && p1.1 < sj {
-                    an.insert((p1.0 as usize, p1.1 as usize));
+                let di = bi - ai;
+                let dj = bj - aj;
+                let i1 = ai - di;
+                let j1 = aj - dj;
+                if i1 >= 0 && i1 < si && j1 >= 0 && j1 < sj {
+                    an.insert((i1, j1));
                 }
-                if p2.0 >= 0 && p2.0 < si && p2.1 >= 0 && p2.1 < sj {
-                    an.insert((p2.0 as usize, p2.1 as usize));
+                let i2 = bi + di;
+                let j2 = bj + dj;
+                if i2 >= 0 && i2 < si && j2 >= 0 && j2 < sj {
+                    an.insert((i2, j2));
                 }
             }
         }
     }
-    let count = antinodes
-        .iter()
-        .flat_map(|(_, v)| v.iter())
-        .collect::<HashSet<_>>()
-        .len();
+    let count = an.len();
     Ok(format!("{count}"))
 }
 
 pub fn p2() -> Result<String> {
     let xs = parse()?;
-    let mut locs = HashMap::<char, HashSet<(usize, usize)>>::new();
+    let mut locs = HashMap::<char, HashSet<(isize, isize)>>::new();
+    let mut an = HashSet::<(isize, isize)>::new();
     for (i, l) in xs.iter().enumerate() {
         for (j, &c) in l.iter().enumerate() {
             if c == '.' {
                 continue;
             }
-            locs.entry(c).or_default().insert((i, j));
+            let p = (i as isize, j as isize);
+            locs.entry(c).or_default().insert(p);
+            an.insert(p);
         }
     }
-    let mut antinodes = HashMap::<char, HashSet<(usize, usize)>>::new();
     let si = xs.len() as isize;
     let sj = xs[0].len() as isize;
-    for (c, locs) in locs {
-        let an = antinodes.entry(c).or_default();
+    for (_, locs) in locs {
         for &(ai, aj) in locs.iter() {
             for &(bi, bj) in locs.iter() {
                 if ai == bi && aj == bj {
-                    an.insert((ai, aj));
                     continue;
                 }
-                let di = (ai as isize) - (bi as isize);
-                let dj = (aj as isize) - (bj as isize);
-                let mut p1 = ((ai as isize) + di, (aj as isize) + dj);
-                while p1.0 >= 0 && p1.0 < si && p1.1 >= 0 && p1.1 < sj {
-                    an.insert((p1.0 as usize, p1.1 as usize));
-                    p1.0 += di;
-                    p1.1 += dj;
+                let di = ai - bi;
+                let dj = aj - bj;
+                let mut i1 = ai + di;
+                let mut j1 = aj + dj;
+                while i1 >= 0 && i1 < si && j1 >= 0 && j1 < sj {
+                    an.insert((i1, j1));
+                    i1 += di;
+                    j1 += dj;
                 }
-                let mut p2 = ((bi as isize) - di, (bj as isize) - dj);
-                while p2.0 >= 0 && p2.0 < si && p2.1 >= 0 && p2.1 < sj {
-                    an.insert((p2.0 as usize, p2.1 as usize));
-                    p2.0 -= di;
-                    p2.1 -= dj;
+                let mut i2 = bi - di;
+                let mut j2 = bj - dj;
+                while i2 >= 0 && i2 < si && j2 >= 0 && j2 < sj {
+                    an.insert((i2, j2));
+                    i2 -= di;
+                    j2 -= dj;
                 }
             }
         }
     }
-    let count = antinodes
-        .iter()
-        .flat_map(|(_, v)| v.iter())
-        .collect::<HashSet<_>>()
-        .len();
+    let count = an.len();
     Ok(format!("{count}"))
 }
