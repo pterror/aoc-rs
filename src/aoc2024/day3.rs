@@ -1,10 +1,10 @@
 use anyhow::Result;
 use regex::Regex;
 
-use crate::util::read_file;
+use crate::util::read_string;
 
 fn parse() -> Result<String> {
-    let str = read_file!("inputs/aoc2024/day3.txt")?;
+    let str = read_string!("inputs/aoc2024/day3.txt")?;
     Ok(str)
 }
 

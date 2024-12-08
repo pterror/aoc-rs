@@ -2,10 +2,10 @@ use std::{cmp::Ordering, collections::HashSet};
 
 use anyhow::Result;
 
-use crate::util::{read_file, to, CollectResult, CollectVec};
+use crate::util::{read_string, to, CollectResult, CollectVec};
 
 fn parse() -> Result<(Vec<(usize, usize)>, Vec<Vec<usize>>)> {
-    let file = read_file!("inputs/aoc2024/day5.txt")?;
+    let file = read_string!("inputs/aoc2024/day5.txt")?;
     let what = file.split("\n\n").collect_vec();
     let a = what[0];
     let b = what[1];
