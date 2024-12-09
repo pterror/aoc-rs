@@ -13,14 +13,15 @@ impl Solution for Day1 {
         1
     }
 
-    fn default_input() -> Result<String> {
-        read_string!("inputs/aoc2024/day1.txt")
+    fn default_input() -> Result<Vec<u8>> {
+        read_bytes!("inputs/aoc2024/day1.txt")
     }
 
-    fn parse(input: &String) -> Result<Self::Input> {
+    fn parse(input: &Vec<u8>) -> Result<Self::Input> {
         let mut a = Vec::<usize>::new();
         let mut b = Vec::<usize>::new();
         for line in input.lines() {
+            let line = line.to_string();
             let nums = line.split("   ").collect_vec();
             a.push(nums[0].parse()?);
             b.push(nums[1].parse()?);

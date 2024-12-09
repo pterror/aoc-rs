@@ -13,14 +13,19 @@ impl Solution for Day2 {
         2
     }
 
-    fn default_input() -> Result<String> {
-        read_string!("inputs/aoc2024/day2.txt")
+    fn default_input() -> Result<Vec<u8>> {
+        read_bytes!("inputs/aoc2024/day2.txt")
     }
 
-    fn parse(input: &String) -> Result<Self::Input> {
+    fn parse(input: &Vec<u8>) -> Result<Self::Input> {
         input
             .lines()
-            .map(|line| line.split(" ").map(to::<isize>).collect_result())
+            .map(|line| {
+                line.to_string()
+                    .split(" ")
+                    .map(to::<isize>)
+                    .collect_result()
+            })
             .collect_result()
     }
 

@@ -16,16 +16,12 @@ impl Solution for Day8 {
         8
     }
 
-    fn default_input() -> Result<String> {
-        read_string!("inputs/aoc2024/day8.txt")
+    fn default_input() -> Result<Vec<u8>> {
+        read_bytes!("inputs/aoc2024/day8.txt")
     }
 
-    fn parse(input: &String) -> Result<Self::Input> {
-        input
-            .lines()
-            .map(|line| line.bytes().collect_vec())
-            .collect_vec()
-            .ok()
+    fn parse(input: &Vec<u8>) -> Result<Self::Input> {
+        input.lines().collect_vec().ok()
     }
 
     fn p1(xs: Self::Input) -> Result<impl Debug> {

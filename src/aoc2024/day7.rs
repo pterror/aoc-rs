@@ -34,15 +34,16 @@ impl Solution for Day7 {
         7
     }
 
-    fn default_input() -> Result<String> {
-        read_string!("inputs/aoc2024/day7.txt")
+    fn default_input() -> Result<Vec<u8>> {
+        read_bytes!("inputs/aoc2024/day7.txt")
     }
 
-    fn parse(input: &String) -> Result<Self::Input> {
+    fn parse(input: &Vec<u8>) -> Result<Self::Input> {
         input
             .lines()
             .map(|line| {
-                let vec = line.split(": ").collect_vec();
+                let string = line.to_string();
+                let vec = string.split(": ").collect_vec();
                 Ok((
                     vec[0].parse::<usize>()?,
                     vec[1].split(" ").map(to::<usize>).collect_result()?,

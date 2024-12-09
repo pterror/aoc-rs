@@ -13,11 +13,12 @@ impl Solution for Day5 {
         5
     }
 
-    fn default_input() -> Result<String> {
-        read_string!("inputs/aoc2024/day5.txt")
+    fn default_input() -> Result<Vec<u8>> {
+        read_bytes!("inputs/aoc2024/day5.txt")
     }
 
-    fn parse(input: &String) -> Result<Self::Input> {
+    fn parse(input: &Vec<u8>) -> Result<Self::Input> {
+        let input = input.to_string();
         let what = input.split("\n\n").collect_vec();
         let a = what[0]
             .lines()

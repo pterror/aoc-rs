@@ -13,12 +13,12 @@ impl Solution for Day9 {
         9
     }
 
-    fn default_input() -> Result<String> {
-        read_string!("inputs/aoc2024/day9.txt")
+    fn default_input() -> Result<Vec<u8>> {
+        read_bytes!("inputs/aoc2024/day9.txt")
     }
 
-    fn parse(input: &String) -> Result<Vec<u8>> {
-        input.chars().map(|x| (x as u8) - b'0').collect_vec().ok()
+    fn parse(input: &Vec<u8>) -> Result<Vec<u8>> {
+        input.iter().map(|x| x - b'0').collect_vec().ok()
     }
 
     fn p1(xs: Self::Input) -> Result<impl Debug> {

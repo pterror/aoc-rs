@@ -1,4 +1,5 @@
 use anyhow::Result;
+use std::borrow::Cow;
 use std::fmt::Debug;
 use std::fs::File;
 use std::io::Read;
@@ -7,25 +8,18 @@ use std::str::FromStr;
 pub trait Solution {
     type Input;
     fn day() -> u8;
-    fn default_input() -> Result<String>;
-    fn parse(input: &String) -> Result<Self::Input>;
+    fn default_input() -> Result<Vec<u8>>;
+    fn parse(input: &Vec<u8>) -> Result<Self::Input>;
     fn p1(input: Self::Input) -> Result<impl Debug>;
     fn p2(input: Self::Input) -> Result<impl Debug>;
-    fn run_p1(input: &String) -> Result<impl Debug> {
+    fn run_p1(input: &Vec<u8>) -> Result<impl Debug> {
         let input = Self::parse(input)?;
         Self::p1(input)
     }
-    fn run_p2(input: &String) -> Result<impl Debug> {
+    fn run_p2(input: &Vec<u8>) -> Result<impl Debug> {
         let input = Self::parse(input)?;
         Self::p2(input)
     }
-}
-
-pub fn read_string_fn(path: &str) -> Result<String> {
-    let mut file = File::open(path)?;
-    let mut string = String::new();
-    file.read_to_string(&mut string)?;
-    Ok(string)
 }
 
 pub fn read_bytes_fn(path: &str) -> Result<Vec<u8>> {
@@ -34,33 +28,6 @@ pub fn read_bytes_fn(path: &str) -> Result<Vec<u8>> {
     file.read_to_end(&mut buf)?;
     Ok(buf)
 }
-
-pub fn read_lines_fn(path: &str) -> Result<Vec<String>> {
-    Ok(read_string_fn(path)?.lines().map(|x| x.into()).collect())
-}
-
-pub fn read_byte_lines_fn(path: &str) -> Result<Vec<Vec<u8>>> {
-    Ok(read_bytes_fn(path)?
-        .split(|&x| x == b'\n')
-        .map(|x| x.into())
-        .collect())
-}
-
-#[cfg(feature = "include_str")]
-macro_rules! read_string {
-    ($path: literal) => {
-        std::io::Result::Ok(String::from(include_str!(concat!("../../", $path))))
-    };
-}
-
-#[cfg(not(feature = "include_str"))]
-macro_rules! read_string {
-    ($path: literal) => {
-        crate::util::read_string_fn($path)
-    };
-}
-
-pub(crate) use read_string;
 
 #[cfg(feature = "include_str")]
 macro_rules! read_bytes {
@@ -79,47 +46,6 @@ macro_rules! read_bytes {
 
 #[allow(unused_imports)]
 pub(crate) use read_bytes;
-
-#[cfg(feature = "include_str")]
-macro_rules! read_lines {
-    ($path: literal) => {
-        std::io::Result::Ok(
-            include_str!(concat!("../../", $path))
-                .lines()
-                .map(String::from)
-                .collect::<Vec<String>>(),
-        )
-    };
-}
-
-#[cfg(not(feature = "include_str"))]
-macro_rules! read_lines {
-    ($path: literal) => {
-        crate::util::read_lines_fn($path)
-    };
-}
-
-pub(crate) use read_lines;
-
-#[cfg(feature = "include_str")]
-macro_rules! read_byte_lines {
-    ($path: literal) => {
-        std::io::Result::Ok(
-            include_bytes!(concat!("../../", $path))
-                .split(|&x| x == b'\n')
-                .collect::<Vec<Vec<u8>>>(),
-        )
-    };
-}
-
-#[cfg(not(feature = "include_str"))]
-macro_rules! read_byte_lines {
-    ($path: literal) => {
-        crate::util::read_byte_lines_fn($path)
-    };
-}
-
-pub(crate) use read_byte_lines;
 
 pub fn to<T: FromStr>(str: &str) -> Result<T>
 where
@@ -161,3 +87,36 @@ where
 }
 
 impl<T> IntoOk for T {}
+
+pub trait BytesLines {
+    type Line;
+    fn lines(&self) -> impl Iterator<Item = Self::Line>;
+}
+
+impl BytesLines for Vec<u8> {
+    type Line = Vec<u8>;
+
+    fn lines(&self) -> impl Iterator<Item = Self::Line> {
+        self.split(|&x| x == b'\n').map(|x| x.to_vec())
+    }
+}
+
+pub trait ToStr {
+    fn to_str(&self) -> Cow<'_, str>;
+}
+
+impl ToStr for Vec<u8> {
+    fn to_str(&self) -> Cow<'_, str> {
+        String::from_utf8_lossy(self)
+    }
+}
+
+pub trait ToString {
+    fn to_string(&self) -> String;
+}
+
+impl ToString for Vec<u8> {
+    fn to_string(&self) -> String {
+        String::from_utf8_lossy(self).into()
+    }
+}
