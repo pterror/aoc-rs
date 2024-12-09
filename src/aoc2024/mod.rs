@@ -23,10 +23,15 @@ fn time(day: u8, part: u8, callback: impl FnOnce() -> Result<String>) {
 
 fn time_sol_helper<T: Solution>() -> Result<()> {
     let day = T::day();
-    let input = T::parse(&T::default_input()?)?;
-    time(day, 1, || Ok(format!("{:?}", T::p1(input)?)));
-    let input = T::parse(&T::default_input()?)?;
-    time(day, 2, || Ok(format!("{:?}", T::p2(input)?)));
+    let default_input = T::default_input()?;
+    time(day, 1, || {
+        let input = T::parse(&default_input)?;
+        Ok(format!("{:?}", T::p1(input)?))
+    });
+    time(day, 2, || {
+        let input = T::parse(&default_input)?;
+        Ok(format!("{:?}", T::p2(input)?))
+    });
     Ok(())
 }
 

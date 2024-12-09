@@ -120,3 +120,77 @@ impl ToString for Vec<u8> {
         String::from_utf8_lossy(self).into()
     }
 }
+
+pub trait ParseBytes {
+    fn parse<T: FromBytes>(&self) -> T;
+}
+
+impl ParseBytes for [u8] {
+    fn parse<T: FromBytes>(&self) -> T {
+        <T as FromBytes>::from_bytes(self)
+    }
+}
+
+pub trait FromBytes {
+    fn from_bytes(bytes: &[u8]) -> Self;
+}
+
+impl FromBytes for u8 {
+    fn from_bytes(bytes: &[u8]) -> Self {
+        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0'))
+    }
+}
+
+impl FromBytes for u16 {
+    fn from_bytes(bytes: &[u8]) -> Self {
+        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0') as u16)
+    }
+}
+
+impl FromBytes for u32 {
+    fn from_bytes(bytes: &[u8]) -> Self {
+        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0') as u32)
+    }
+}
+
+impl FromBytes for u64 {
+    fn from_bytes(bytes: &[u8]) -> Self {
+        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0') as u64)
+    }
+}
+
+impl FromBytes for usize {
+    fn from_bytes(bytes: &[u8]) -> Self {
+        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0') as usize)
+    }
+}
+
+impl FromBytes for i8 {
+    fn from_bytes(bytes: &[u8]) -> Self {
+        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0') as i8)
+    }
+}
+
+impl FromBytes for i16 {
+    fn from_bytes(bytes: &[u8]) -> Self {
+        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0') as i16)
+    }
+}
+
+impl FromBytes for i32 {
+    fn from_bytes(bytes: &[u8]) -> Self {
+        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0') as i32)
+    }
+}
+
+impl FromBytes for i64 {
+    fn from_bytes(bytes: &[u8]) -> Self {
+        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0') as i64)
+    }
+}
+
+impl FromBytes for isize {
+    fn from_bytes(bytes: &[u8]) -> Self {
+        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0') as isize)
+    }
+}

@@ -18,13 +18,12 @@ impl Solution for Day1 {
     }
 
     fn parse(input: &Vec<u8>) -> Result<Self::Input> {
-        let mut a = Vec::<usize>::new();
-        let mut b = Vec::<usize>::new();
+        let mut a = Vec::new();
+        let mut b = Vec::new();
         for line in input.lines() {
-            let line = line.to_string();
-            let nums = line.split("   ").collect_vec();
-            a.push(nums[0].parse()?);
-            b.push(nums[1].parse()?);
+            let nums = line.split(|&x| x == b' ').collect_vec();
+            a.push(nums[0].parse());
+            b.push(nums[nums.len() - 1].parse());
         }
         Ok((a, b))
     }

@@ -20,13 +20,9 @@ impl Solution for Day2 {
     fn parse(input: &Vec<u8>) -> Result<Self::Input> {
         input
             .lines()
-            .map(|line| {
-                line.to_string()
-                    .split(" ")
-                    .map(to::<isize>)
-                    .collect_result()
-            })
-            .collect_result()
+            .map(|line| line.split(|&x| x == b' ').map(|x| x.parse()).collect_vec())
+            .collect_vec()
+            .ok()
     }
 
     fn p1(xs: Self::Input) -> Result<impl Debug> {

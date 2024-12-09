@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use anyhow::Result;
+use anyhow::{Error, Result};
 
 use crate::util::*;
 
@@ -42,12 +42,16 @@ impl Solution for Day7 {
         input
             .lines()
             .map(|line| {
-                let string = line.to_string();
-                let vec = string.split(": ").collect_vec();
-                Ok((
-                    vec[0].parse::<usize>()?,
-                    vec[1].split(" ").map(to::<usize>).collect_result()?,
-                ))
+                let split = line
+                    .iter()
+                    .position(|&x| x == b':')
+                    .ok_or_else(|| Error::msg("day 7 split by `: `"))?;
+                let result = line[..split].parse();
+                let operands = line[split + 2..]
+                    .split(|&x| x == b' ')
+                    .map(|x| x.parse())
+                    .collect_vec();
+                Ok((result, operands))
             })
             .collect_result()
     }

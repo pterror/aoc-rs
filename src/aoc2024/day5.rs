@@ -18,19 +18,19 @@ impl Solution for Day5 {
     }
 
     fn parse(input: &Vec<u8>) -> Result<Self::Input> {
-        let input = input.to_string();
-        let what = input.split("\n\n").collect_vec();
+        let input = input.lines().collect_vec();
+        let what = input.split(|x| x.len() == 0).collect_vec();
         let a = what[0]
-            .lines()
+            .iter()
             .map(|l| {
-                let x = l.split("|").collect_vec();
-                Ok((x[0].parse::<usize>()?, x[1].parse::<usize>()?))
+                let x = l.split(|&x| x == b'|').collect_vec();
+                (x[0].parse(), x[1].parse())
             })
-            .collect_result()?;
+            .collect_vec();
         let b = what[1]
-            .lines()
-            .map(|l| l.split(",").map(to::<usize>).collect_result())
-            .collect_result()?;
+            .iter()
+            .map(|l| l.split(|&x| x == b',').map(|x| x.parse()).collect_vec())
+            .collect_vec();
         Ok((a, b))
     }
 
