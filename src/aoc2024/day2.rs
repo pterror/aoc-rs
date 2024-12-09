@@ -37,7 +37,7 @@ impl Solution for Day2 {
                 .skip(1)
                 .enumerate()
                 .map(|(i, n)| n - x[i])
-                .collect::<Vec<_>>();
+                .collect_vec();
             if !diffs.iter().all(|n| *n < 0) && !diffs.iter().all(|n| *n > 0) {
                 continue;
             }
@@ -53,17 +53,13 @@ impl Solution for Day2 {
         let mut count = 0;
         'outer: for x in xs {
             for (i, _) in x.iter().enumerate() {
-                let x = x
-                    .iter()
-                    .take(i)
-                    .chain(x.iter().skip(i + 1))
-                    .collect::<Vec<_>>();
+                let x = x.iter().take(i).chain(x.iter().skip(i + 1)).collect_vec();
                 let diffs = x
                     .iter()
                     .skip(1)
                     .enumerate()
                     .map(|(i, n)| *n - x[i])
-                    .collect::<Vec<_>>();
+                    .collect_vec();
                 if !diffs.iter().all(|n| *n < 0) && !diffs.iter().all(|n| *n > 0) {
                     continue;
                 }

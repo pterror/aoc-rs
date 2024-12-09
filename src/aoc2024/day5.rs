@@ -52,7 +52,7 @@ impl Solution for Day5 {
     fn p2((rules, books): Self::Input) -> Result<impl Debug> {
         let rules_map = rules.iter().collect::<HashSet<_>>();
         let mut sum = 0;
-        'outer: for book in books {
+        for book in books {
             let mut sorted = book.clone();
             sorted.sort_by(|&a, &b| {
                 if rules_map.contains(&(a, b)) {
@@ -63,10 +63,9 @@ impl Solution for Day5 {
                     return Ordering::Equal;
                 }
             });
-            if book == sorted {
-                continue 'outer;
+            if book != sorted {
+                sum += sorted[sorted.len() / 2];
             }
-            sum += sorted[sorted.len() / 2];
         }
         Ok(sum)
     }
