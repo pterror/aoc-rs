@@ -1,18 +1,31 @@
+use std::fmt::Debug;
+
 use anyhow::Result;
 
-use crate::util::read_lines;
+use crate::util::*;
 
-fn parse() -> Result<Vec<String>> {
-    let lines = read_lines!("inputs/aoc2024/day9.txt")?;
-    Ok(lines)
-}
+pub struct Day0;
 
-pub fn p1() -> Result<String> {
-    let xs = parse()?;
-    Ok(format!("{xs:?}"))
-}
+impl Solution for Day0 {
+    type Input = String;
 
-pub fn p2() -> Result<String> {
-    let xs = parse()?;
-    Ok(format!("{xs:?}"))
+    fn day() -> u8 {
+        0
+    }
+
+    fn default_input() -> Result<String> {
+        read_string!("inputs/aoc2024/day9.txt")
+    }
+
+    fn parse(input: &String) -> Result<Self::Input> {
+        input.clone().ok()
+    }
+
+    fn p1(xs: Self::Input) -> Result<impl Debug> {
+        Ok(xs)
+    }
+
+    fn p2(xs: Self::Input) -> Result<impl Debug> {
+        Ok(xs)
+    }
 }

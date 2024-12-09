@@ -1,7 +1,25 @@
 use anyhow::Result;
+use std::fmt::Debug;
 use std::fs::File;
 use std::io::Read;
 use std::str::FromStr;
+
+pub trait Solution {
+    type Input;
+    fn day() -> u8;
+    fn default_input() -> Result<String>;
+    fn parse(input: &String) -> Result<Self::Input>;
+    fn p1(input: Self::Input) -> Result<impl Debug>;
+    fn p2(input: Self::Input) -> Result<impl Debug>;
+    fn run_p1(input: &String) -> Result<impl Debug> {
+        let input = Self::parse(input)?;
+        Self::p1(input)
+    }
+    fn run_p2(input: &String) -> Result<impl Debug> {
+        let input = Self::parse(input)?;
+        Self::p2(input)
+    }
+}
 
 pub fn read_string_fn(path: &str) -> Result<String> {
     let mut file = File::open(path)?;
@@ -132,3 +150,14 @@ impl<T, U: Iterator<Item = Result<T>>> CollectResult<T> for U {
         self.collect::<Result<_>>()
     }
 }
+
+pub trait IntoOk
+where
+    Self: Sized,
+{
+    fn ok(self) -> Result<Self> {
+        Ok(self)
+    }
+}
+
+impl<T> IntoOk for T {}

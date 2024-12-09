@@ -1,21 +1,8 @@
+use std::fmt::Debug;
+
 use anyhow::Result;
 
-use crate::util::{read_lines, to, CollectResult, CollectVec};
-
-fn parse() -> Result<Vec<(usize, Vec<usize>)>> {
-    let lines = read_lines!("inputs/aoc2024/day7.txt")?;
-    let a = lines
-        .iter()
-        .map(|line| {
-            let vec = line.split(": ").collect_vec();
-            Ok((
-                vec[0].parse::<usize>()?,
-                vec[1].split(" ").map(to::<usize>).collect_result()?,
-            ))
-        })
-        .collect_result()?;
-    Ok(a)
-}
+use crate::util::*;
 
 fn any_sum(a: usize, ops: &[usize]) -> bool {
     match ops {
@@ -23,17 +10,6 @@ fn any_sum(a: usize, ops: &[usize]) -> bool {
         [n] => a == *n,
         [rest @ .., n] => (a >= *n && any_sum(a - n, rest)) || (a % n == 0 && any_sum(a / n, rest)),
     }
-}
-
-pub fn p1() -> Result<String> {
-    let xs = parse()?;
-    let mut sum = 0;
-    for (total, ops) in xs {
-        if any_sum(total, &ops) {
-            sum += total;
-        }
-    }
-    Ok(format!("{sum}"))
 }
 
 fn any_sum_2(a: usize, ops: &[usize]) -> bool {
@@ -49,13 +25,49 @@ fn any_sum_2(a: usize, ops: &[usize]) -> bool {
     }
 }
 
-pub fn p2() -> Result<String> {
-    let xs = parse()?;
-    let mut sum = 0;
-    for (total, ops) in xs {
-        if any_sum_2(total, &ops) {
-            sum += total;
-        }
+pub struct Day7;
+
+impl Solution for Day7 {
+    type Input = Vec<(usize, Vec<usize>)>;
+
+    fn day() -> u8 {
+        7
     }
-    Ok(format!("{sum}"))
+
+    fn default_input() -> Result<String> {
+        read_string!("inputs/aoc2024/day7.txt")
+    }
+
+    fn parse(input: &String) -> Result<Self::Input> {
+        input
+            .lines()
+            .map(|line| {
+                let vec = line.split(": ").collect_vec();
+                Ok((
+                    vec[0].parse::<usize>()?,
+                    vec[1].split(" ").map(to::<usize>).collect_result()?,
+                ))
+            })
+            .collect_result()
+    }
+
+    fn p1(xs: Self::Input) -> Result<impl Debug> {
+        let mut sum = 0;
+        for (total, ops) in xs {
+            if any_sum(total, &ops) {
+                sum += total;
+            }
+        }
+        Ok(sum)
+    }
+
+    fn p2(xs: Self::Input) -> Result<impl Debug> {
+        let mut sum = 0;
+        for (total, ops) in xs {
+            if any_sum_2(total, &ops) {
+                sum += total;
+            }
+        }
+        Ok(sum)
+    }
 }

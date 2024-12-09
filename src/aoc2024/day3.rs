@@ -1,36 +1,49 @@
+use std::fmt::Debug;
+
 use anyhow::Result;
 use regex::Regex;
 
-use crate::util::read_string;
+use crate::util::*;
 
-fn parse() -> Result<String> {
-    let str = read_string!("inputs/aoc2024/day3.txt")?;
-    Ok(str)
-}
+pub struct Day3;
 
-pub fn p1() -> Result<String> {
-    let xs = parse()?;
-    let pat = Regex::new(r"mul\((\d+),(\d+)\)")?;
-    let mut total = 0isize;
-    for instr in pat.captures_iter(xs.as_str()) {
-        total += instr[1].parse::<isize>()? * instr[2].parse::<isize>()?;
+impl Solution for Day3 {
+    type Input = String;
+
+    fn day() -> u8 {
+        3
     }
-    Ok(format!("{total}"))
-}
 
-pub fn p2() -> Result<String> {
-    let xs = parse()?;
-    let pat = Regex::new(r"mul\((\d+),(\d+)\)|do\(\)|don't\(\)")?;
-    let mut enabled = true;
-    let mut total = 0isize;
-    for instr in pat.captures_iter(xs.as_str()) {
-        if instr[0] == *"do()" {
-            enabled = true;
-        } else if instr[0] == *"don't()" {
-            enabled = false;
-        } else if enabled {
+    fn default_input() -> Result<String> {
+        read_string!("inputs/aoc2024/day3.txt")
+    }
+
+    fn parse(input: &String) -> Result<Self::Input> {
+        input.clone().ok()
+    }
+
+    fn p1(str: Self::Input) -> Result<impl Debug> {
+        let pat = Regex::new(r"mul\((\d+),(\d+)\)")?;
+        let mut total = 0isize;
+        for instr in pat.captures_iter(str.as_str()) {
             total += instr[1].parse::<isize>()? * instr[2].parse::<isize>()?;
         }
+        Ok(total)
     }
-    Ok(format!("{total}"))
+
+    fn p2(str: Self::Input) -> Result<impl Debug> {
+        let pat = Regex::new(r"mul\((\d+),(\d+)\)|do\(\)|don't\(\)")?;
+        let mut enabled = true;
+        let mut total = 0isize;
+        for instr in pat.captures_iter(str.as_str()) {
+            if instr[0] == *"do()" {
+                enabled = true;
+            } else if instr[0] == *"don't()" {
+                enabled = false;
+            } else if enabled {
+                total += instr[1].parse::<isize>()? * instr[2].parse::<isize>()?;
+            }
+        }
+        Ok(total)
+    }
 }

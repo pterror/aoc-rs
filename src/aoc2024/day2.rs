@@ -1,51 +1,37 @@
+use std::fmt::Debug;
+
 use anyhow::Result;
 
-use crate::util::{read_lines, to, CollectResult};
+use crate::util::*;
 
-fn parse() -> Result<Vec<Vec<isize>>> {
-    let lines = read_lines!("inputs/aoc2024/day2.txt")?;
-    let result = lines
-        .iter()
-        .map(|line| line.split(" ").map(to::<isize>).collect_result());
-    Ok(result.collect_result()?)
-}
+pub struct Day2;
 
-pub fn p1() -> Result<String> {
-    let xs = parse()?;
-    let mut count = 0;
-    for x in xs {
-        let diffs = x
-            .iter()
-            .skip(1)
-            .enumerate()
-            .map(|(i, n)| n - x[i])
-            .collect::<Vec<_>>();
-        if !diffs.iter().all(|n| *n < 0) && !diffs.iter().all(|n| *n > 0) {
-            continue;
-        }
-        if !diffs.iter().all(|n| n.abs() >= 1 && n.abs() <= 3) {
-            continue;
-        }
-        count += 1;
+impl Solution for Day2 {
+    type Input = Vec<Vec<isize>>;
+
+    fn day() -> u8 {
+        2
     }
-    Ok(format!("{count}"))
-}
 
-pub fn p2() -> Result<String> {
-    let xs = parse()?;
-    let mut count = 0;
-    'outer: for x in xs {
-        for (i, _) in x.iter().enumerate() {
-            let x = x
-                .iter()
-                .take(i)
-                .chain(x.iter().skip(i + 1))
-                .collect::<Vec<_>>();
+    fn default_input() -> Result<String> {
+        read_string!("inputs/aoc2024/day2.txt")
+    }
+
+    fn parse(input: &String) -> Result<Self::Input> {
+        input
+            .lines()
+            .map(|line| line.split(" ").map(to::<isize>).collect_result())
+            .collect_result()
+    }
+
+    fn p1(xs: Self::Input) -> Result<impl Debug> {
+        let mut count = 0;
+        for x in xs {
             let diffs = x
                 .iter()
                 .skip(1)
                 .enumerate()
-                .map(|(i, n)| *n - x[i])
+                .map(|(i, n)| n - x[i])
                 .collect::<Vec<_>>();
             if !diffs.iter().all(|n| *n < 0) && !diffs.iter().all(|n| *n > 0) {
                 continue;
@@ -54,8 +40,35 @@ pub fn p2() -> Result<String> {
                 continue;
             }
             count += 1;
-            continue 'outer;
         }
+        Ok(count)
     }
-    Ok(format!("{count}"))
+
+    fn p2(xs: Self::Input) -> Result<impl Debug> {
+        let mut count = 0;
+        'outer: for x in xs {
+            for (i, _) in x.iter().enumerate() {
+                let x = x
+                    .iter()
+                    .take(i)
+                    .chain(x.iter().skip(i + 1))
+                    .collect::<Vec<_>>();
+                let diffs = x
+                    .iter()
+                    .skip(1)
+                    .enumerate()
+                    .map(|(i, n)| *n - x[i])
+                    .collect::<Vec<_>>();
+                if !diffs.iter().all(|n| *n < 0) && !diffs.iter().all(|n| *n > 0) {
+                    continue;
+                }
+                if !diffs.iter().all(|n| n.abs() >= 1 && n.abs() <= 3) {
+                    continue;
+                }
+                count += 1;
+                continue 'outer;
+            }
+        }
+        Ok(count)
+    }
 }

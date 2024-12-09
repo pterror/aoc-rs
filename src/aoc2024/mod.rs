@@ -2,6 +2,8 @@ use std::time;
 
 use anyhow::Result;
 
+use crate::util::Solution;
+
 pub mod day1;
 pub mod day2;
 pub mod day3;
@@ -12,30 +14,34 @@ pub mod day7;
 pub mod day8;
 pub mod day9;
 
-fn time(day: i32, part: i32, callback: impl FnOnce() -> Result<String>) {
+fn time(day: u8, part: u8, callback: impl FnOnce() -> Result<String>) {
     let start = time::SystemTime::now();
     let str = callback().unwrap_or_else(|_| String::from("<error>"));
     let delta = time::SystemTime::now().duration_since(start).unwrap();
     println!("d{day}p{part}: {delta:?}\t{str}");
 }
 
+fn time_sol_helper<T: Solution>() -> Result<()> {
+    let day = T::day();
+    let input = T::parse(&T::default_input()?)?;
+    time(day, 1, || Ok(format!("{:?}", T::p1(input)?)));
+    let input = T::parse(&T::default_input()?)?;
+    time(day, 2, || Ok(format!("{:?}", T::p2(input)?)));
+    Ok(())
+}
+
+fn time_sol<T: Solution>() {
+    time_sol_helper::<T>().unwrap();
+}
+
 pub fn run_all() {
-    time(1, 1, day1::p1);
-    time(1, 2, day1::p2);
-    time(2, 1, day2::p1);
-    time(2, 2, day2::p2);
-    time(3, 1, day3::p1);
-    time(3, 2, day3::p2);
-    time(4, 1, day4::p1);
-    time(4, 2, day4::p2);
-    time(5, 1, day5::p1);
-    time(5, 2, day5::p2);
-    time(6, 1, day6::p1);
-    time(6, 2, day6::p2);
-    time(7, 1, day7::p1);
-    time(7, 2, day7::p2);
-    time(8, 1, day8::p1);
-    time(8, 2, day8::p2);
-    time(9, 1, day9::p1);
-    time(9, 2, day9::p2);
+    time_sol::<day1::Day1>();
+    time_sol::<day2::Day2>();
+    time_sol::<day3::Day3>();
+    time_sol::<day4::Day4>();
+    time_sol::<day5::Day5>();
+    time_sol::<day6::Day6>();
+    time_sol::<day7::Day7>();
+    time_sol::<day8::Day8>();
+    time_sol::<day9::Day9>();
 }
