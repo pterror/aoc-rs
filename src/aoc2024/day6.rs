@@ -94,7 +94,7 @@ impl Solution for Day6 {
         let mut i2 = i;
         let mut j2 = j;
         let mut dir = (-1, 0);
-        let mut seen = HashSet::<(i32, i32, (i32, i32))>::new();
+        let mut seen = HashSet::new();
         loop {
             let c = xs[i2 as usize][j2 as usize];
             if c == b'#' {
