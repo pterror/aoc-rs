@@ -10,6 +10,7 @@ pub mod day5;
 pub mod day6;
 pub mod day7;
 pub mod day8;
+pub mod day9;
 
 fn time(day: i32, part: i32, callback: impl FnOnce() -> Result<String>) {
     let start = time::SystemTime::now();
@@ -35,4 +36,6 @@ pub fn run_all() {
     time(7, 2, day7::p2);
     time(8, 1, day8::p1);
     time(8, 2, day8::p2);
+    time(9, 1, day9::p1);
+    time(9, 2, day9::p2);
 }
