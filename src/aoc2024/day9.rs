@@ -4,6 +4,14 @@ use anyhow::Result;
 
 use crate::util::*;
 
+type File = (u8, usize);
+
+#[derive(Debug)]
+enum FsEntry {
+    File(File),
+    Space(u8, Vec<File>),
+}
+
 pub struct Day9;
 
 impl Solution for Day9 {
@@ -53,57 +61,61 @@ impl Solution for Day9 {
     }
 
     fn p2(xs: Self::Input) -> Result<impl Debug> {
-        let mut parts = Vec::<Vec<Option<usize>>>::new();
+        let mut fs = Vec::new();
         for (i, &x) in xs.iter().enumerate() {
             if i % 2 == 0 {
                 let id = i / 2;
-                parts.push((0..x).map(|_| Some(id)).collect_vec())
+                fs.push(FsEntry::File((x, id)))
             } else {
-                parts.push((0..x).map(|_| None).collect_vec())
+                fs.push(FsEntry::Space(x, Vec::with_capacity(0)))
             }
         }
-        let mut fs = parts.iter().flatten().map(|x| *x).collect_vec();
         let mut end = fs.len();
         let mut start = 0;
         while start < end {
             end -= 1;
-            while fs[start] != None {
+            while let FsEntry::File(_) = fs[start] {
                 start += 1;
             }
-            while fs[end] == None {
+            while let FsEntry::Space(_, _) = fs[end] {
                 end -= 1;
             }
-            let num = fs[end];
-            let mut num_size = 1;
-            while end > 0 && fs[end - 1] == num {
-                end -= 1;
-                num_size += 1;
-            }
-            let mut sp_start = start;
-            while sp_start < end {
-                while sp_start < end && fs[sp_start] != None {
-                    sp_start += 1;
-                }
-                let mut sp_size = 1;
-                let mut sp_curr = sp_start;
-                while fs[sp_curr + 1] == None {
-                    sp_curr += 1;
-                    sp_size += 1;
-                }
-                if sp_size >= num_size {
-                    for i in 0..num_size {
-                        fs[sp_start + i] = num;
-                        fs[end + i] = None;
+            if let FsEntry::File(file @ (f_len, _)) = fs[end] {
+                let mut curr = start;
+                while curr < end {
+                    if let FsEntry::Space(space_left, files) = &mut fs[curr] {
+                        if *space_left >= f_len {
+                            *space_left -= f_len;
+                            files.push(file);
+                            if *space_left == 0 && curr == start {
+                                start += 1;
+                            }
+                            fs[end] = FsEntry::Space(f_len, Vec::new());
+                            break;
+                        }
                     }
-                    break;
-                } else {
-                    sp_start += 1;
+                    curr += 1;
                 }
             }
         }
         let mut sum = 0;
-        for (i, &x) in fs.iter().enumerate() {
-            sum += i * x.unwrap_or(0);
+        let mut i = 0;
+        for entry in fs.iter() {
+            match entry {
+                FsEntry::File((length, id)) => {
+                    let length = *length as usize;
+                    sum += *id * length * (i + i + length - 1) / 2;
+                    i += length;
+                }
+                FsEntry::Space(free_space, files) => {
+                    for (length, id) in files {
+                        let length = *length as usize;
+                        sum += *id * length * (i + i + length - 1) / 2;
+                        i += length;
+                    }
+                    i += *free_space as usize;
+                }
+            }
         }
         Ok(sum)
     }
