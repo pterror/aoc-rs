@@ -5,6 +5,26 @@ use std::fs::File;
 use std::io::Read;
 use std::str::FromStr;
 
+macro_rules! generate_for_tuples {
+    ($macro: ident) => {
+        $macro!(T, U);
+        $macro!(T, U, V);
+        $macro!(T, U, V, W);
+        $macro!(T, U, V, W, X);
+        $macro!(T, U, V, W, X, Y);
+        $macro!(T, U, V, W, X, Y, Z);
+        $macro!(T, U, V, W, X, Y, Z, A);
+        $macro!(T, U, V, W, X, Y, Z, A, B);
+        $macro!(T, U, V, W, X, Y, Z, A, B, C);
+        $macro!(T, U, V, W, X, Y, Z, A, B, C, D);
+        $macro!(T, U, V, W, X, Y, Z, A, B, C, D, E);
+        $macro!(T, U, V, W, X, Y, Z, A, B, C, D, E, F);
+        $macro!(T, U, V, W, X, Y, Z, A, B, C, D, E, F, G);
+        $macro!(T, U, V, W, X, Y, Z, A, B, C, D, E, F, G, H);
+        $macro!(T, U, V, W, X, Y, Z, A, B, C, D, E, F, G, H, I);
+    };
+}
+
 pub trait Solution {
     type Input;
     fn day() -> u8;
@@ -120,6 +140,31 @@ impl ToString for Vec<u8> {
         String::from_utf8_lossy(self).into()
     }
 }
+
+pub trait ToOption {
+    type Item;
+
+    fn to_option(&self) -> Option<Self::Item>;
+}
+
+macro_rules! generate_tuple_to_option {
+    ($($t: ident),*) => {
+        #[allow(non_snake_case)]
+        impl<$($t: Copy),*> ToOption for ($(Option<$t>),*) {
+            type Item = ($($t),*);
+
+            fn to_option(&self) -> Option<Self::Item> {
+                if let &($(Some($t)),*) = self {
+                    Some(($($t),*))
+                } else {
+                    None
+                }
+            }
+        }
+    };
+}
+
+generate_for_tuples!(generate_tuple_to_option);
 
 pub trait ParseBytes {
     fn parse<T: FromBytes>(&self) -> T;

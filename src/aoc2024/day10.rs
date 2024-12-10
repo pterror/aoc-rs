@@ -18,17 +18,8 @@ fn count_peaks(
     let positions = vec![(-1, 0), (0, -1), (0, 1), (1, 0)]
         .iter()
         .map(|&(di, dj)| (i.checked_add_signed(di), j.checked_add_signed(dj)))
-        .flat_map(|(i, j)| {
-            if let (Some(i), Some(j)) = (i, j) {
-                if i < si && j < sj {
-                    Some((i, j))
-                } else {
-                    None
-                }
-            } else {
-                None
-            }
-        })
+        .flat_map(|x| x.to_option())
+        .filter(|&(i, j)| i < si && j < sj)
         .collect_vec();
     let mut count = 0;
     for &pos @ (i2, j2) in positions.iter() {
