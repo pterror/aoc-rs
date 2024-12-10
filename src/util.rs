@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{Error, Result};
 use std::borrow::Cow;
 use std::fmt::Debug;
 use std::fs::File;
@@ -191,6 +191,39 @@ macro_rules! generate_tuple_to_option {
 }
 
 generate_for_tuples!(generate_tuple_to_option);
+
+pub trait ToResult {
+    type Item;
+
+    fn to_result(&self) -> Result<Self::Item>;
+}
+
+impl<T: Clone> ToResult for Option<T> {
+    type Item = T;
+
+    fn to_result(&self) -> Result<Self::Item> {
+        self.clone().ok_or(Error::msg(""))
+    }
+}
+
+macro_rules! generate_tuple_to_result {
+    ($($t: ident),*) => {
+        #[allow(non_snake_case)]
+        impl<$($t: Copy),*> ToResult for ($(Result<$t>),*) {
+            type Item = ($($t),*);
+
+            fn to_result(&self) -> Result<Self::Item> {
+                if let &($(Ok($t)),*) = self {
+                    Ok(($($t),*))
+                } else {
+                    Err(Error::msg("tuple of results failed"))
+                }
+            }
+        }
+    };
+}
+
+generate_for_tuples!(generate_tuple_to_result);
 
 pub trait ParseBytes {
     fn parse<T: FromBytes>(&self) -> T;
