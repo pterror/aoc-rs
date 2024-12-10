@@ -5,6 +5,7 @@ use anyhow::Result;
 use crate::util::Solution;
 
 pub mod day1;
+pub mod day10;
 pub mod day2;
 pub mod day3;
 pub mod day4;
@@ -49,4 +50,5 @@ pub fn run_all() {
     time_sol::<day7::Day7>();
     time_sol::<day8::Day8>();
     time_sol::<day9::Day9>();
+    time_sol::<day10::Day10>();
 }
