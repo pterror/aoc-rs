@@ -11,5 +11,7 @@ type T = aoc2024::day10::Day10;
 fn main() {
     // let input = T::parse(&T::default_input().unwrap()).unwrap();
     // println!("{:?}", T::p2(input).unwrap());
-    aoc2024::run_all();
+    println!("total runtime (no parsing): {:?}", aoc2024::run_all(false));
+    println!("");
+    println!("total runtime (with parsing): {:?}", aoc2024::run_all(true));
 }

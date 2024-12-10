@@ -7,7 +7,7 @@ use crate::util::*;
 pub struct Day2;
 
 impl Solution for Day2 {
-    type Input = Vec<Vec<isize>>;
+    type Input = Vec<Vec<i8>>;
 
     fn day() -> u8 {
         2
@@ -27,18 +27,17 @@ impl Solution for Day2 {
 
     fn p1(xs: Self::Input) -> Result<impl Debug> {
         let mut count = 0;
-        for x in xs {
-            let diffs = x
-                .iter()
-                .skip(1)
-                .enumerate()
-                .map(|(i, n)| n - x[i])
-                .collect_vec();
-            if !diffs.iter().all(|n| *n < 0) && !diffs.iter().all(|n| *n > 0) {
-                continue;
-            }
-            if !diffs.iter().all(|n| n.abs() >= 1 && n.abs() <= 3) {
-                continue;
+        'outer: for x in xs {
+            let sign = (x[1] - x[0]).signum();
+            for (i, n) in x.iter().skip(1).enumerate() {
+                let diff = n - x[i];
+                if diff.signum() != sign {
+                    continue 'outer;
+                }
+                let abs_diff = diff.abs();
+                if abs_diff < 1 || abs_diff > 3 {
+                    continue 'outer;
+                }
             }
             count += 1;
         }

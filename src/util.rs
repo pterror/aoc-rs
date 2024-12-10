@@ -4,6 +4,45 @@ use std::fmt::Debug;
 use std::fs::File;
 use std::io::Read;
 use std::str::FromStr;
+use std::time::{Duration, SystemTime};
+
+pub fn time(day: u8, part: u8, callback: impl FnOnce() -> Result<String>) -> Duration {
+    let start = SystemTime::now();
+    let str = callback().unwrap_or_else(|_| String::from("<error>"));
+    let delta = SystemTime::now().duration_since(start).unwrap();
+    println!("d{day}p{part}: {delta:?}\t{str}");
+    delta
+}
+
+pub fn time_sol_helper<T: Solution>(count_parsing: bool) -> Result<Duration> {
+    if count_parsing {
+        let day = T::day();
+        let default_input = T::default_input()?;
+        let mut duration = Duration::ZERO;
+        duration += time(day, 1, || {
+            let input = T::parse(&default_input)?;
+            Ok(format!("{:?}", T::p1(input)?))
+        });
+        duration += time(day, 2, || {
+            let input = T::parse(&default_input)?;
+            Ok(format!("{:?}", T::p2(input)?))
+        });
+        Ok(duration)
+    } else {
+        let day = T::day();
+        let default_input = T::default_input()?;
+        let input = T::parse(&default_input)?;
+        let mut duration = Duration::ZERO;
+        duration += time(day, 1, || Ok(format!("{:?}", T::p1(input)?)));
+        let input = T::parse(&default_input)?;
+        duration += time(day, 2, || Ok(format!("{:?}", T::p2(input)?)));
+        Ok(duration)
+    }
+}
+
+pub fn time_sol<T: Solution>(count_parsing: bool) -> Duration {
+    time_sol_helper::<T>(count_parsing).unwrap()
+}
 
 macro_rules! generate_for_tuples {
     ($macro: ident) => {
