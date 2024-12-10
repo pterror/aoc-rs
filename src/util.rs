@@ -25,6 +25,21 @@ macro_rules! generate_for_tuples {
     };
 }
 
+macro_rules! generate_for_integers {
+    ($macro: ident) => {
+        $macro!(u8);
+        $macro!(u16);
+        $macro!(u32);
+        $macro!(u64);
+        $macro!(usize);
+        $macro!(i8);
+        $macro!(i16);
+        $macro!(i32);
+        $macro!(i64);
+        $macro!(isize);
+    };
+}
+
 pub trait Solution {
     type Input;
     fn day() -> u8;
@@ -180,62 +195,14 @@ pub trait FromBytes {
     fn from_bytes(bytes: &[u8]) -> Self;
 }
 
-impl FromBytes for u8 {
-    fn from_bytes(bytes: &[u8]) -> Self {
-        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0'))
-    }
+macro_rules! generate_integer_from_bytes {
+    ($t: ident) => {
+        impl FromBytes for $t {
+            fn from_bytes(bytes: &[u8]) -> Self {
+                bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0') as $t)
+            }
+        }
+    };
 }
 
-impl FromBytes for u16 {
-    fn from_bytes(bytes: &[u8]) -> Self {
-        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0') as u16)
-    }
-}
-
-impl FromBytes for u32 {
-    fn from_bytes(bytes: &[u8]) -> Self {
-        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0') as u32)
-    }
-}
-
-impl FromBytes for u64 {
-    fn from_bytes(bytes: &[u8]) -> Self {
-        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0') as u64)
-    }
-}
-
-impl FromBytes for usize {
-    fn from_bytes(bytes: &[u8]) -> Self {
-        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0') as usize)
-    }
-}
-
-impl FromBytes for i8 {
-    fn from_bytes(bytes: &[u8]) -> Self {
-        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0') as i8)
-    }
-}
-
-impl FromBytes for i16 {
-    fn from_bytes(bytes: &[u8]) -> Self {
-        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0') as i16)
-    }
-}
-
-impl FromBytes for i32 {
-    fn from_bytes(bytes: &[u8]) -> Self {
-        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0') as i32)
-    }
-}
-
-impl FromBytes for i64 {
-    fn from_bytes(bytes: &[u8]) -> Self {
-        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0') as i64)
-    }
-}
-
-impl FromBytes for isize {
-    fn from_bytes(bytes: &[u8]) -> Self {
-        bytes.iter().fold(0, |p, &c| p * 10 + (c - b'0') as isize)
-    }
-}
+generate_for_integers!(generate_integer_from_bytes);
