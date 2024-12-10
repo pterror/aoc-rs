@@ -162,6 +162,17 @@ pub trait ToOption {
     fn to_option(&self) -> Option<Self::Item>;
 }
 
+impl<T: Clone> ToOption for Result<T> {
+    type Item = T;
+
+    fn to_option(&self) -> Option<Self::Item> {
+        match self {
+            Err(_) => None,
+            Ok(x) => Some(x.clone()),
+        }
+    }
+}
+
 macro_rules! generate_tuple_to_option {
     ($($t: ident),*) => {
         #[allow(non_snake_case)]
