@@ -40,22 +40,22 @@ impl Solution for Day9 {
                 parts.push((0..x).map(|_| None).collect_vec())
             }
         }
-        let mut fs = parts.iter().flatten().collect_vec();
+        let mut fs = parts.iter().flatten().map(|x| *x).collect_vec();
         let mut end = fs.len() - 1;
         let mut start = 0;
         while start < end {
-            if *fs[end] == None {
+            if fs[end] == None {
                 end -= 1;
-            } else if *fs[start] != None {
+            } else if fs[start] != None {
                 start += 1;
             } else {
                 fs[start] = fs[end];
-                fs[end] = &None;
+                fs[end] = None;
             }
         }
         fs.drain(end + 1..);
         let mut sum = 0;
-        for (i, &&x) in fs.iter().enumerate() {
+        for (i, &x) in fs.iter().enumerate() {
             sum += i * x.unwrap_or(0);
         }
         Ok(sum)
