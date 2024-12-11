@@ -3,7 +3,6 @@ use std::borrow::Cow;
 use std::fmt::Debug;
 use std::fs::File;
 use std::io::Read;
-use std::str::FromStr;
 use std::time::{Duration, SystemTime};
 
 pub fn time(day: u8, part: u8, callback: impl FnOnce() -> Result<String>) -> Duration {
@@ -20,15 +19,9 @@ pub fn time_sol_helper<T: Solution>(count_parsing: bool) -> Result<Duration> {
         let default_input = T::default_input()?;
         let mut duration = Duration::ZERO;
         T::reset_global_state();
-        duration += time(day, 1, || {
-            let input = T::parse(&default_input)?;
-            Ok(format!("{:?}", T::p1(input)?))
-        });
+        duration += time(day, 1, || Ok(format!("{:?}", T::run_p1(&default_input)?)));
         T::reset_global_state();
-        duration += time(day, 2, || {
-            let input = T::parse(&default_input)?;
-            Ok(format!("{:?}", T::p2(input)?))
-        });
+        duration += time(day, 2, || Ok(format!("{:?}", T::run_p2(&default_input)?)));
         Ok(duration)
     } else {
         let day = T::day();
@@ -126,16 +119,6 @@ macro_rules! read_bytes {
 #[allow(unused_imports)]
 pub(crate) use read_bytes;
 
-pub fn to<T: FromStr>(str: &str) -> Result<T>
-where
-    <T as FromStr>::Err: std::error::Error,
-    <T as FromStr>::Err: Send,
-    <T as FromStr>::Err: Sync,
-    <T as FromStr>::Err: 'static,
-{
-    Ok(str.parse()?)
-}
-
 pub trait CollectVec<T> {
     fn collect_vec(self) -> Vec<T>;
 }
@@ -191,6 +174,7 @@ impl ToStr for Vec<u8> {
 }
 
 pub trait ToString {
+    #[allow(dead_code)]
     fn to_string(&self) -> String;
 }
 
@@ -239,6 +223,7 @@ generate_for_tuples!(generate_tuple_to_option);
 pub trait ToResult {
     type Item;
 
+    #[allow(dead_code)]
     fn to_result(&self) -> Result<Self::Item>;
 }
 

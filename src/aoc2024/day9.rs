@@ -5,14 +5,6 @@ use anyhow::Result;
 
 use crate::util::*;
 
-type File = (u8, usize);
-
-#[derive(Debug)]
-enum FsEntry {
-    File(File),
-    Space(u8, Vec<File>),
-}
-
 pub struct Day9;
 
 impl Solution for Day9 {
