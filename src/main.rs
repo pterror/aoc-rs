@@ -6,7 +6,7 @@ mod aoc2024;
 mod template;
 mod util;
 
-type T = aoc2024::day10::Day10;
+type T = aoc2024::day11::Day11;
 
 fn main() {
     // let input = T::parse(&T::default_input().unwrap()).unwrap();
