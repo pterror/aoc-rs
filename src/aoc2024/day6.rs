@@ -5,7 +5,7 @@ use anyhow::Result;
 use crate::util::*;
 
 fn is_loop(xs: &Vec<Vec<u8>>, i: i32, j: i32, seen: &mut HashSet<(i32, i32, (i32, i32))>) -> bool {
-    seen.drain();
+    seen.clear();
     let mut i = i;
     let mut j = j;
     let mut dir = (-1, 0);

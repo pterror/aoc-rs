@@ -19,10 +19,12 @@ pub fn time_sol_helper<T: Solution>(count_parsing: bool) -> Result<Duration> {
         let day = T::day();
         let default_input = T::default_input()?;
         let mut duration = Duration::ZERO;
+        T::reset_global_state();
         duration += time(day, 1, || {
             let input = T::parse(&default_input)?;
             Ok(format!("{:?}", T::p1(input)?))
         });
+        T::reset_global_state();
         duration += time(day, 2, || {
             let input = T::parse(&default_input)?;
             Ok(format!("{:?}", T::p2(input)?))
@@ -33,8 +35,10 @@ pub fn time_sol_helper<T: Solution>(count_parsing: bool) -> Result<Duration> {
         let default_input = T::default_input()?;
         let input = T::parse(&default_input)?;
         let mut duration = Duration::ZERO;
+        T::reset_global_state();
         duration += time(day, 1, || Ok(format!("{:?}", T::p1(input)?)));
         let input = T::parse(&default_input)?;
+        T::reset_global_state();
         duration += time(day, 2, || Ok(format!("{:?}", T::p2(input)?)));
         Ok(duration)
     }
@@ -94,6 +98,7 @@ pub trait Solution {
         let input = Self::parse(input)?;
         Self::p2(input)
     }
+    fn reset_global_state() {}
 }
 
 pub fn read_bytes_fn(path: &str) -> Result<Vec<u8>> {
