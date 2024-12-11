@@ -1,4 +1,5 @@
-use std::{collections::HashMap, fmt::Debug};
+use std::collections::HashMap;
+use std::fmt::Debug;
 
 use anyhow::Result;
 
@@ -52,26 +53,13 @@ impl Solution for Day11 {
             .ok()
     }
 
-    fn p1(mut xs: Self::Input) -> Result<impl Debug> {
-        for _ in 0..25 {
-            xs = xs
-                .iter()
-                .flat_map(|&s| {
-                    if s == 0 {
-                        vec![1]
-                    } else {
-                        let len = s.ilog10() + 1;
-                        if len % 2 == 0 {
-                            let modulo = 10usize.pow(len / 2);
-                            vec![s / modulo, s % modulo]
-                        } else {
-                            vec![s * 2024]
-                        }
-                    }
-                })
-                .collect_vec();
+    fn p1(xs: Self::Input) -> Result<impl Debug> {
+        let mut result = 0;
+        let mut cache = HashMap::new();
+        for x in xs {
+            result += stones(x, 25, &mut cache);
         }
-        Ok(xs.len())
+        Ok(result)
     }
 
     fn p2(xs: Self::Input) -> Result<impl Debug> {
