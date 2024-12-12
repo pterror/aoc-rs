@@ -9,30 +9,32 @@ use crate::util::*;
 static STONES_CACHE: LazyLock<Mutex<HashMap<(usize, u8), usize>>> =
     LazyLock::new(|| Mutex::new(HashMap::new()));
 
-fn stones(n: usize, count: u8) -> usize {
-    let cached = {
-        let locked = STONES_CACHE.lock().unwrap();
-        locked.get(&(n, count)).map(|&x| x)
-    };
-    if let Some(result) = cached {
+fn stones_helper(n: usize, count: u8, cache: &mut HashMap<(usize, u8), usize>) -> usize {
+    if count == 0 {
+        return 1;
+    }
+    if let Some(&result) = cache.get(&(n, count)) {
         result
-    } else if count == 0 {
-        1
     } else {
         let sum = if n == 0 {
-            stones(1, count - 1)
+            stones_helper(1, count - 1, cache)
         } else {
             let len = n.ilog10() + 1;
             if len % 2 == 0 {
                 let modulo = 10usize.pow(len / 2);
-                stones(n / modulo, count - 1) + stones(n % modulo, count - 1)
+                stones_helper(n / modulo, count - 1, cache)
+                    + stones_helper(n % modulo, count - 1, cache)
             } else {
-                stones(n * 2024, count - 1)
+                stones_helper(n * 2024, count - 1, cache)
             }
         };
-        STONES_CACHE.lock().unwrap().insert((n, count), sum);
+        cache.insert((n, count), sum);
         sum
     }
+}
+
+fn stones(n: usize, count: u8) -> usize {
+    stones_helper(n, count, &mut STONES_CACHE.lock().unwrap())
 }
 
 pub struct Day11;
