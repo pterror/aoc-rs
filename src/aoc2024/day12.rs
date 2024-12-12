@@ -1,4 +1,4 @@
-use std::{collections::HashSet, fmt::Debug};
+use std::fmt::Debug;
 
 use anyhow::Result;
 
@@ -9,26 +9,23 @@ fn process(
     character: u8,
     i: usize,
     j: usize,
-    seen: &mut HashSet<(usize, usize)>,
-    all_seen: &mut HashSet<(usize, usize)>,
+    seen: &mut [Vec<bool>],
 ) -> (usize, usize) {
-    seen.insert((i, j));
-    all_seen.insert((i, j));
+    seen[i][j] = true;
     let mut area = 1;
     let mut perimeter = 0;
     let si = map.len();
     let sj = map[0].len();
     for (di, dj) in vec![(-1, 0), (0, -1), (0, 1), (1, 0)] {
         if let (Some(i2), Some(j2)) = (i.checked_add_signed(di), j.checked_add_signed(dj)) {
-            let coord = (i2, j2);
             if i2 >= si || j2 >= sj || map[i2][j2] != character {
                 perimeter += 1;
                 continue;
             }
-            if seen.contains(&coord) {
+            if seen[i2][j2] {
                 continue;
             }
-            let (new_area, new_perimeter) = process(map, character, i2, j2, seen, all_seen);
+            let (new_area, new_perimeter) = process(map, character, i2, j2, seen);
             area += new_area;
             perimeter += new_perimeter;
         } else {
@@ -43,11 +40,9 @@ fn process_2(
     character: u8,
     i: usize,
     j: usize,
-    seen: &mut HashSet<(usize, usize)>,
-    all_seen: &mut HashSet<(usize, usize)>,
+    seen: &mut [Vec<bool>],
 ) -> (usize, usize) {
-    seen.insert((i, j));
-    all_seen.insert((i, j));
+    seen[i][j] = true;
     let mut area = 1;
     let mut perimeter = 0;
     let si = map.len();
@@ -90,14 +85,13 @@ fn process_2(
     }
     for (di, dj) in vec![(-1, 0), (0, -1), (0, 1), (1, 0)] {
         if let (Some(i2), Some(j2)) = (i.checked_add_signed(di), j.checked_add_signed(dj)) {
-            let coord = (i2, j2);
             if i2 >= si || j2 >= sj || map[i2][j2] != character {
                 continue;
             }
-            if seen.contains(&coord) {
+            if seen[i2][j2] {
                 continue;
             }
-            let (new_area, new_perimeter) = process_2(map, character, i2, j2, seen, all_seen);
+            let (new_area, new_perimeter) = process_2(map, character, i2, j2, seen);
             area += new_area;
             perimeter += new_perimeter;
         }
@@ -123,14 +117,17 @@ impl Solution for Day12 {
     }
 
     fn p1(xs: Self::Input) -> Result<impl Debug> {
-        let mut all_seen = HashSet::new();
+        let mut all_seen = xs
+            .iter()
+            .map(|l| l.iter().map(|_| false).collect_vec())
+            .collect_vec();
         let mut total = 0;
         for (i, l) in xs.iter().enumerate() {
             for (j, &c) in l.iter().enumerate() {
-                if all_seen.contains(&(i, j)) {
+                if all_seen[i][j] {
                     continue;
                 }
-                let (area, perimeter) = process(&xs, c, i, j, &mut HashSet::new(), &mut all_seen);
+                let (area, perimeter) = process(&xs, c, i, j, &mut all_seen);
                 total += area * perimeter;
             }
         }
@@ -138,14 +135,17 @@ impl Solution for Day12 {
     }
 
     fn p2(xs: Self::Input) -> Result<impl Debug> {
-        let mut all_seen = HashSet::new();
+        let mut all_seen = xs
+            .iter()
+            .map(|l| l.iter().map(|_| false).collect_vec())
+            .collect_vec();
         let mut total = 0;
         for (i, l) in xs.iter().enumerate() {
             for (j, &c) in l.iter().enumerate() {
-                if all_seen.contains(&(i, j)) {
+                if all_seen[i][j] {
                     continue;
                 }
-                let (area, perimeter) = process_2(&xs, c, i, j, &mut HashSet::new(), &mut all_seen);
+                let (area, perimeter) = process_2(&xs, c, i, j, &mut all_seen);
                 total += area * perimeter;
             }
         }
