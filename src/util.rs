@@ -279,3 +279,34 @@ macro_rules! generate_integer_from_bytes {
 }
 
 generate_for_integers!(generate_integer_from_bytes);
+
+pub trait TrySearch
+where
+    Self: Sized,
+{
+    fn try_search(bytes: &[u8]) -> (Option<Self>, usize);
+}
+
+macro_rules! generate_integer_try_search {
+    ($t: ident) => {
+        impl TrySearch for $t {
+            fn try_search(bytes: &[u8]) -> (Option<Self>, usize) {
+                for i in 0..bytes.len() {
+                    let b = bytes[i];
+                    if b >= b'0' && b <= b'9' {
+                        let mut value: $t = 0;
+                        let mut i = i;
+                        while i < bytes.len() && bytes[i] >= b'0' && bytes[i] <= b'9' {
+                            value = value * 10 + (bytes[i] - b'0') as $t;
+                            i += 1;
+                        }
+                        return (Some(value), i);
+                    }
+                }
+                (None, bytes.len())
+            }
+        }
+    };
+}
+
+generate_for_integers!(generate_integer_try_search);

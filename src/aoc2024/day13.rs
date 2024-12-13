@@ -1,7 +1,6 @@
 use std::fmt::Debug;
 
-use anyhow::Result;
-use regex::Regex;
+use anyhow::{Error, Result};
 
 use crate::util::*;
 
@@ -34,22 +33,19 @@ impl Solution for Day13 {
             .collect_vec()
             .split(|x| x.len() == 0)
             .map(|x| {
-                let pat = Regex::new(r"Button A: X\+(\d+), Y\+(\d+)")?;
-                let a = x[0].to_str();
-                let ma = pat.captures(&a).unwrap();
-                let ax = ma[1].parse::<isize>()?;
-                let ay = ma[2].parse::<isize>()?;
-                let pat = Regex::new(r"Button B: X\+(\d+), Y\+(\d+)")?;
-                let b = x[1].to_str();
-                let mb = pat.captures(&b).unwrap();
-                let bx = mb[1].parse::<isize>()?;
-                let by = mb[2].parse::<isize>()?;
-                let pat = Regex::new(r"Prize: X=(\d+), Y=(\d+)")?;
-                let c = x[2].to_str();
-                let mp = pat.captures(&c).unwrap();
-                let px = mp[1].parse::<isize>()?;
-                let py = mp[2].parse::<isize>()?;
-                Ok((ax, ay, bx, by, px, py))
+                let (a, i) = isize::try_search(&x[0]);
+                let (b, _) = isize::try_search(&x[0][i..]);
+                let (c, i) = isize::try_search(&x[1]);
+                let (d, _) = isize::try_search(&x[1][i..]);
+                let (e, i) = isize::try_search(&x[2]);
+                let (f, _) = isize::try_search(&x[2][i..]);
+                if let (Some(ax), Some(ay), Some(bx), Some(by), Some(px), Some(py)) =
+                    (a, b, c, d, e, f)
+                {
+                    Ok((ax, ay, bx, by, px, py))
+                } else {
+                    Err(Error::msg("day 13: could not parse integers"))
+                }
             })
             .collect_result()
     }
