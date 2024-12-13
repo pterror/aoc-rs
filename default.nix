@@ -2,11 +2,8 @@
 , rustPlatform
 }:
 rustPlatform.buildRustPackage rec {
-  pname = "maisie";
+  pname = "aoc-rs";
   version = "0.1.0";
   cargoLock.lockFile = ./Cargo.lock;
-  cargoLock.outputHashes = {
-    "sap-0.1.0-alpha.1" = "sha256-r+1NTVRxD3VFB4GKojfe+ZLZicTwXBfhreWV6UDwNAE=";
-  };
   src = lib.cleanSource ./.;
 }

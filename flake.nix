@@ -11,8 +11,8 @@
     {
       packages = forEachSystem
         (system: pkgs: rec {
-          maisie = pkgs.callPackage ./default.nix { };
-          default = maisie;
+          aoc-rs = pkgs.callPackage ./default.nix { };
+          default = aoc-rs;
         });
       devShell = forEachSystem
         (system: pkgs: pkgs.mkShell rec {
