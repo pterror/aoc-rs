@@ -5,7 +5,7 @@ mod template;
 mod util;
 
 fn main() {
-    // type T = aoc2024::day13::Day13;
+    // type T = aoc2024::day14::Day14;
     // let input = &T::default_input().unwrap();
     // println!("{:?}", T::run_p1(input).unwrap());
     // println!("{:?}", T::run_p2(input).unwrap());
