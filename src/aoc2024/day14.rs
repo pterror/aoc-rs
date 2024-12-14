@@ -42,9 +42,9 @@ impl Solution for Day14 {
         let wh = w / 2;
         let hh = h / 2;
         for _ in 0..100 {
-            for robot in xs.iter_mut() {
-                robot.0 = (robot.0 + robot.2 + w) % w;
-                robot.1 = (robot.1 + robot.3 + h) % h;
+            for (x, y, dx, dy) in xs.iter_mut() {
+                *x = (*x + *dx + w) % w;
+                *y = (*y + *dy + h) % h;
             }
         }
         let mut q0 = 0;
@@ -75,10 +75,10 @@ impl Solution for Day14 {
         let threshold = 2;
         let mut hi = 0;
         let mut hi_it = 0;
-        for iter in 0..10000 {
-            for robot in xs.iter_mut() {
-                robot.0 = (robot.0 + robot.2 + w) % w;
-                robot.1 = (robot.1 + robot.3 + h) % h;
+        for iter in 0..(w * h) {
+            for (x, y, dx, dy) in xs.iter_mut() {
+                *x = (*x + *dx + w) % w;
+                *y = (*y + *dy + h) % h;
             }
             xs.sort();
             let mut count = 0;
