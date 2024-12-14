@@ -70,31 +70,30 @@ impl Solution for Day14 {
         Ok(q0 * q1 * q2 * q3)
     }
 
-    fn p2(mut xs: Self::Input) -> Result<impl Debug> {
+    fn p2(xs: Self::Input) -> Result<impl Debug> {
         let w = 101;
         let h = 103;
-        let threshold = 2;
         let mut hi = 0;
         let mut hi_it = 0;
+        let mut hs = vec![vec![0; h as usize]; w as usize];
         for iter in 0..(w * h) {
-            for (x, y, dx, dy) in xs.iter_mut() {
-                *x = (*x + *dx + w) % w;
-                *y = (*y + *dy + h) % h;
-            }
-            xs.sort();
+            let xs = xs.iter().map(|(x, y, dx, dy)| {
+                (((x + dx * iter) % w + w) % w, ((y + dy * iter) % h + h) % h)
+            });
             let mut count = 0;
-            let mut last = (0, 0);
-            for &(x, y, _, _) in xs.iter() {
-                if x.abs_diff(last.0) < threshold && y.abs_diff(last.1) < threshold {
+            for (x, y) in xs {
+                if (x > 0 && hs[(x - 1) as usize][y as usize] == iter)
+                    || (y > 0 && hs[x as usize][(y - 1) as usize] == iter)
+                {
                     count += 1;
                 }
-                last = (x, y);
+                hs[x as usize][y as usize] = iter;
             }
-            if count > hi {
+            if iter > 0 && count > hi {
                 hi = count;
                 hi_it = iter;
             }
         }
-        Ok(hi_it + 1)
+        Ok(hi_it)
     }
 }
