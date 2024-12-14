@@ -36,22 +36,23 @@ impl Solution for Day14 {
             .collect_result()
     }
 
-    fn p1(mut xs: Self::Input) -> Result<impl Debug> {
+    fn p1(xs: Self::Input) -> Result<impl Debug> {
         let w = 101;
         let h = 103;
         let wh = w / 2;
         let hh = h / 2;
-        for _ in 0..100 {
-            for (x, y, dx, dy) in xs.iter_mut() {
-                *x = (*x + *dx + w) % w;
-                *y = (*y + *dy + h) % h;
-            }
-        }
+        let steps = 100;
         let mut q0 = 0;
         let mut q1 = 0;
         let mut q2 = 0;
         let mut q3 = 0;
-        for &(x, y, _, _) in xs.iter() {
+        let xs = xs.iter().map(|(x, y, dx, dy)| {
+            (
+                ((x + dx * steps) % w + w) % w,
+                ((y + dy * steps) % h + h) % h,
+            )
+        });
+        for (x, y) in xs {
             if x < wh {
                 if y < hh {
                     q0 += 1;
