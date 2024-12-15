@@ -4,6 +4,8 @@ use anyhow::Result;
 
 use crate::util::*;
 
+const DEBUG_OUTPUT: bool = false;
+
 pub struct Day15;
 
 impl Solution for Day15 {
@@ -112,43 +114,47 @@ impl Solution for Day15 {
         board[bi][bj] = b'.';
         let si = board.len();
         let sj = board[0].len();
-        // println!(
-        //     "{}",
-        //     board
-        //         .iter()
-        //         .map(|x| String::from_utf8_lossy(x))
-        //         .collect_vec()
-        //         .join("\n")
-        // );
+        if DEBUG_OUTPUT {
+            println!(
+                "{}",
+                board
+                    .iter()
+                    .map(|x| String::from_utf8_lossy(x))
+                    .collect_vec()
+                    .join("\n")
+            );
+        }
         for (mi, mj) in moves {
             let ni = bi + mi as usize;
             let nj = bj + mj as usize;
             if ni == 0 || nj == 0 || ni == si || nj == sj {
                 continue;
             }
-            let x = board[bi][bj];
-            let y = board[ni][nj];
-            board[bi][bj] = b'o';
-            board[ni][nj] = b'x';
-            // println!(
-            //     "{}",
-            //     board
-            //         .iter()
-            //         .map(|x| String::from_utf8_lossy(x))
-            //         .collect_vec()
-            //         .join("\n")
-            // );
-            board[bi][bj] = x;
-            board[ni][nj] = y;
-            // println!(
-            //     "{:?} {} {} {}",
-            //     (ni, nj, mi, mj),
-            //     board[ni][nj] as char,
-            //     (mi != 0 || mj == -1) && board[ni][nj] == b']' && board[ni][nj - 1] == b'[',
-            //     (mi != 0 || mj == -1)
-            //         && board[ni][nj] == b']'
-            //         && can_move(&board, ni, nj - 1, mi, mj)
-            // );
+            if DEBUG_OUTPUT {
+                let x = board[bi][bj];
+                let y = board[ni][nj];
+                board[bi][bj] = b'o';
+                board[ni][nj] = b'x';
+                println!(
+                    "{}",
+                    board
+                        .iter()
+                        .map(|x| String::from_utf8_lossy(x))
+                        .collect_vec()
+                        .join("\n")
+                );
+                board[bi][bj] = x;
+                board[ni][nj] = y;
+                println!(
+                    "{:?} {} {} {}",
+                    (ni, nj, mi, mj),
+                    board[ni][nj] as char,
+                    (mi != 0 || mj == -1) && board[ni][nj] == b']' && board[ni][nj - 1] == b'[',
+                    (mi != 0 || mj == -1)
+                        && board[ni][nj] == b']'
+                        && can_move(&board, ni, nj - 1, mi, mj)
+                );
+            }
             if board[ni][nj] == b'.' {
                 bi = ni;
                 bj = nj;
@@ -173,16 +179,18 @@ impl Solution for Day15 {
                 }
             }
         }
-        // board[bi][bj] = b'@';
-        // println!("{bi} {bj}");
-        // println!(
-        //     "{}",
-        //     board
-        //         .iter()
-        //         .map(|x| String::from_utf8_lossy(x))
-        //         .collect_vec()
-        //         .join("\n")
-        // );
+        if DEBUG_OUTPUT {
+            board[bi][bj] = b'@';
+            println!("bot is at: {:?}", (bi, bj));
+            println!(
+                "{}",
+                board
+                    .iter()
+                    .map(|x| String::from_utf8_lossy(x))
+                    .collect_vec()
+                    .join("\n")
+            );
+        }
         Ok(sum)
     }
 }
