@@ -4,6 +4,8 @@ use anyhow::Result;
 
 use crate::util::*;
 
+const SHOW_BOT: bool = false;
+const DEBUG_BOT: bool = false;
 const DEBUG_OUTPUT: bool = false;
 
 pub struct Day15;
@@ -133,8 +135,12 @@ impl Solution for Day15 {
             if DEBUG_OUTPUT {
                 let x = board[bi][bj];
                 let y = board[ni][nj];
-                board[bi][bj] = b'o';
-                board[ni][nj] = b'x';
+                if SHOW_BOT || DEBUG_BOT {
+                    board[bi][bj] = b'@';
+                }
+                if DEBUG_BOT {
+                    board[ni][nj] = b'x';
+                }
                 println!(
                     "{}",
                     board
@@ -143,17 +149,12 @@ impl Solution for Day15 {
                         .collect_vec()
                         .join("\n")
                 );
-                board[bi][bj] = x;
-                board[ni][nj] = y;
-                println!(
-                    "{:?} {} {} {}",
-                    (ni, nj, mi, mj),
-                    board[ni][nj] as char,
-                    (mi != 0 || mj == -1) && board[ni][nj] == b']' && board[ni][nj - 1] == b'[',
-                    (mi != 0 || mj == -1)
-                        && board[ni][nj] == b']'
-                        && can_move(&board, ni, nj - 1, mi, mj)
-                );
+                if SHOW_BOT || DEBUG_BOT {
+                    board[bi][bj] = x;
+                }
+                if DEBUG_BOT {
+                    board[ni][nj] = y;
+                }
             }
             if board[ni][nj] == b'.' {
                 bi = ni;
@@ -180,8 +181,12 @@ impl Solution for Day15 {
             }
         }
         if DEBUG_OUTPUT {
-            board[bi][bj] = b'@';
-            println!("bot is at: {:?}", (bi, bj));
+            if DEBUG_BOT {
+                println!("bot is at: {:?}", (bi, bj));
+            }
+            if SHOW_BOT {
+                board[bi][bj] = b'@';
+            }
             println!(
                 "{}",
                 board
