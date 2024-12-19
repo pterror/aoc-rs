@@ -7,7 +7,7 @@ use std::time::{Duration, SystemTime};
 
 pub fn time(day: u8, part: u8, callback: impl FnOnce() -> Result<String>) -> Duration {
     let start = SystemTime::now();
-    let str = callback().unwrap_or_else(|_| String::from("<error>"));
+    let str = callback().unwrap();
     let delta = SystemTime::now().duration_since(start).unwrap();
     println!("d{day}p{part}: {delta:?}\t{str}");
     delta

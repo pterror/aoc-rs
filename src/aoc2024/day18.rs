@@ -45,31 +45,6 @@ impl Solution for Day18 {
                     (ni.checked_add_signed(di), nj.checked_add_signed(dj))
                 {
                     if ni == si - 1 && nj == sj - 1 {
-                        // println!(
-                        //     "{}",
-                        //     map.iter()
-                        //         .enumerate()
-                        //         .map(|(i, l)| {
-                        //             let bytes = l
-                        //                 .iter()
-                        //                 .enumerate()
-                        //                 .map(|(j, &b)| {
-                        //                     if b {
-                        //                         b'#'
-                        //                     } else {
-                        //                         if (i == 0 && j == 0) || scores[i][j] != 0 {
-                        //                             b'O'
-                        //                         } else {
-                        //                             b'.'
-                        //                         }
-                        //                     }
-                        //                 })
-                        //                 .collect_vec();
-                        //             String::from_utf8_lossy(&bytes).to_string()
-                        //         })
-                        //         .collect_vec()
-                        //         .join("\n")
-                        // );
                         return Ok(-ns);
                     }
                     if ni2 < si && nj2 < sj {
@@ -87,32 +62,35 @@ impl Solution for Day18 {
     fn p2(xs: Self::Input) -> Result<impl Debug> {
         let si = 71;
         let sj = 71;
-        let mut map = vec![vec![false; si]; sj];
-        let mut heap = BinaryHeap::<(i16, usize, usize)>::new();
-        'outer: for &(i, j) in xs.iter() {
-            heap.drain();
-            let mut scores = vec![vec![0i16; si]; sj];
-            map[i as usize][j as usize] = true;
-            // steps, i, j
-            heap.push((0, 0, 0));
-            while let Some((ns, ni, nj)) = heap.pop() {
-                for (di, dj) in vec![(0, 1), (1, 0), (-1, 0), (0, -1)] {
-                    if let (Some(ni2), Some(nj2)) =
-                        (ni.checked_add_signed(di), nj.checked_add_signed(dj))
-                    {
-                        if ni == si - 1 && nj == sj - 1 {
-                            continue 'outer;
-                        }
-                        if ni2 < si && nj2 < sj {
-                            if (ni2 != 0 || nj2 != 0) && scores[ni2][nj2] == 0 && !map[ni2][nj2] {
-                                scores[ni2][nj2] = ns - 1;
-                                heap.push((ns - 1, ni2, nj2));
-                            }
+        let mut heap = BinaryHeap::<(u16, usize, usize)>::new();
+        let last = xs.len() as u16;
+        let mut map = vec![vec![last; si]; sj];
+        let mut seen = vec![vec![false; si]; sj];
+        for (idx, &(i, j)) in xs.iter().enumerate() {
+            map[i as usize][j as usize] = idx as u16;
+        }
+        seen[0][0] = true;
+        let mut idx = xs.len() as u16;
+        // steps, i, j
+        heap.push((map[0][0], 0, 0));
+        while let Some((ns, ni, nj)) = heap.pop() {
+            idx = idx.min(ns);
+            for (di, dj) in vec![(0, 1), (1, 0), (-1, 0), (0, -1)] {
+                if let (Some(ni2), Some(nj2)) =
+                    (ni.checked_add_signed(di), nj.checked_add_signed(dj))
+                {
+                    if ni == si - 1 && nj == sj - 1 {
+                        let (i, j) = xs[idx as usize];
+                        return Ok(format!("{i},{j}"));
+                    }
+                    if ni2 < si && nj2 < sj {
+                        if !seen[ni2][nj2] {
+                            seen[ni2][nj2] = true;
+                            heap.push((map[ni2][nj2], ni2, nj2));
                         }
                     }
                 }
             }
-            return Ok(format!("{i},{j}"));
         }
         Err(Error::msg("day18 part 2: no solution"))
     }
