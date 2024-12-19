@@ -31,19 +31,17 @@ impl Solution for Day1 {
     fn p1((mut a, mut b): Self::Input) -> Result<impl Debug> {
         a.sort();
         b.sort();
-        let mut sum = 0usize;
-        for (a, b) in a.iter().zip(b) {
-            sum += a.abs_diff(b);
-        }
-        Ok(sum)
+        a.iter()
+            .zip(b)
+            .map(|(a, b)| a.abs_diff(b))
+            .sum::<usize>()
+            .ok()
     }
 
-    fn p2((mut a, b): Self::Input) -> Result<impl Debug> {
-        a.sort();
-        let mut sum = 0usize;
-        for a in a.iter() {
-            sum += a * b.iter().filter(|b| a == *b).count();
-        }
-        Ok(sum)
+    fn p2((a, b): Self::Input) -> Result<impl Debug> {
+        a.iter()
+            .map(|&a| a * b.iter().filter(|&&b| a == b).count())
+            .sum::<usize>()
+            .ok()
     }
 }
