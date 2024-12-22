@@ -14,7 +14,14 @@ impl Solution for Day21 {
     }
 
     fn default_input() -> Result<Vec<u8>> {
-        read_bytes!("inputs/aoc2024/day21.txt")
+        // read_bytes!("inputs/aoc2024/day21.txt")
+        br"029A
+980A
+179A
+456A
+379A"
+            .to_vec()
+            .ok()
     }
 
     fn parse(input: &Vec<u8>) -> Result<Self::Input> {
