@@ -17,6 +17,7 @@ pub mod day2;
 pub mod day20;
 pub mod day21;
 pub mod day22;
+pub mod day23;
 pub mod day3;
 pub mod day4;
 pub mod day5;
@@ -49,5 +50,6 @@ pub fn run_all(count_parsing: bool) -> Duration {
     duration += time_sol::<day20::Day20>(count_parsing);
     duration += time_sol::<day21::Day21>(count_parsing);
     duration += time_sol::<day22::Day22>(count_parsing);
+    duration += time_sol::<day23::Day23>(count_parsing);
     duration
 }
