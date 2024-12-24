@@ -93,12 +93,14 @@ impl Solution for Day24 {
             renames.insert(reg.clone(), reg.clone());
         }
         let mut swaps = HashMap::from([
-            // (b"qjj".to_vec(), b"qjj".to_vec()),
             (b"gjc".to_vec(), b"qjj".to_vec()),
             (b"qjj".to_vec(), b"gjc".to_vec()),
-            // d11 (qjj) -> t11 (gjc)
-            // qsb OR e39 -> c40
-            // qsb OR vsm -> chr
+            (b"z17".to_vec(), b"wmp".to_vec()),
+            (b"wmp".to_vec(), b"z17".to_vec()),
+            (b"z26".to_vec(), b"gvm".to_vec()),
+            (b"gvm".to_vec(), b"z26".to_vec()),
+            (b"z39".to_vec(), b"qsb".to_vec()),
+            (b"qsb".to_vec(), b"z39".to_vec()),
         ]);
         let mut eqns = eqns.iter().collect::<HashSet<_>>();
         while eqns.len() != 0 {
