@@ -1,4 +1,4 @@
-use std::collections::{BinaryHeap, HashMap};
+use std::collections::BinaryHeap;
 use std::fmt::Debug;
 
 use anyhow::Result;
@@ -216,7 +216,7 @@ impl Solution for Day20 {
         let mut count = 0;
         heap.push((0, sti, stj));
         seen[sti][stj] = true;
-        let mut map = HashMap::new();
+        // let mut map = HashMap::new();
         'outer: while let Some((ns, ni, nj)) = heap.pop() {
             for &(di, dj) in deltas.iter() {
                 if let (Some(ni2), Some(nj2)) =
@@ -233,11 +233,11 @@ impl Solution for Day20 {
                         continue;
                     }
                     // if saved >= 50 {
-                    map.entry(saved)
-                        .and_modify(|x| {
-                            *x += 1;
-                        })
-                        .or_insert(1);
+                    // map.entry(saved)
+                    //     .and_modify(|x| {
+                    //         *x += 1;
+                    //     })
+                    //     .or_insert(1);
                     // }
                     if saved >= 100 {
                         count += 1;

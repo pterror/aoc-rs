@@ -1,8 +1,34 @@
-use std::{collections::HashMap, fmt::Debug};
+use std::{collections::HashMap, fmt::Debug, sync::LazyLock};
 
 use anyhow::Result;
 
 use crate::util::*;
+
+static NUM_PAD: LazyLock<HashMap<u8, (u8, u8)>> = LazyLock::new(|| {
+    HashMap::from([
+        (b'7', (0, 0)),
+        (b'8', (0, 1)),
+        (b'9', (0, 2)),
+        (b'4', (1, 0)),
+        (b'5', (1, 1)),
+        (b'6', (1, 2)),
+        (b'1', (2, 0)),
+        (b'2', (2, 1)),
+        (b'3', (2, 2)),
+        (b'0', (3, 1)),
+        (b'A', (3, 2)),
+    ])
+});
+
+static DIR_PAD: LazyLock<HashMap<u8, (u8, u8)>> = LazyLock::new(|| {
+    HashMap::from([
+        (b'^', (0, 1)),
+        (b'A', (0, 2)),
+        (b'<', (1, 0)),
+        (b'v', (1, 1)),
+        (b'>', (1, 2)),
+    ])
+});
 
 pub struct Day21;
 
@@ -30,185 +56,35 @@ impl Solution for Day21 {
 
     fn p1(xs: Self::Input) -> Result<impl Debug> {
         let mut sum = 0;
-        let nummov = HashMap::from([
-            ((b'A', b'A'), b"A".to_vec()),
-            ((b'0', b'0'), b"A".to_vec()),
-            ((b'1', b'1'), b"A".to_vec()),
-            ((b'2', b'2'), b"A".to_vec()),
-            ((b'3', b'3'), b"A".to_vec()),
-            ((b'4', b'4'), b"A".to_vec()),
-            ((b'5', b'5'), b"A".to_vec()),
-            ((b'6', b'6'), b"A".to_vec()),
-            ((b'7', b'7'), b"A".to_vec()),
-            ((b'8', b'8'), b"A".to_vec()),
-            ((b'9', b'9'), b"A".to_vec()),
-            ((b'A', b'0'), b"<A".to_vec()),
-            ((b'A', b'1'), b"^<<A".to_vec()),
-            ((b'A', b'2'), b"^<A".to_vec()),
-            ((b'A', b'3'), b"^A".to_vec()),
-            ((b'A', b'4'), b"^^<<A".to_vec()),
-            ((b'A', b'5'), b"^^<A".to_vec()),
-            ((b'A', b'6'), b"^^A".to_vec()),
-            ((b'A', b'7'), b"^^^<<A".to_vec()),
-            ((b'A', b'8'), b"^^^<A".to_vec()),
-            ((b'A', b'9'), b"^^^A".to_vec()),
-            ((b'0', b'A'), b">A".to_vec()),
-            ((b'0', b'1'), b"^<A".to_vec()),
-            ((b'0', b'2'), b"^A".to_vec()),
-            ((b'0', b'3'), b"^>A".to_vec()),
-            ((b'0', b'4'), b"^^<A".to_vec()),
-            ((b'0', b'5'), b"^^A".to_vec()),
-            ((b'0', b'6'), b"^^>A".to_vec()),
-            ((b'0', b'7'), b"^^^<A".to_vec()),
-            ((b'0', b'8'), b"^^^A".to_vec()),
-            ((b'0', b'9'), b"^^^>A".to_vec()),
-            ((b'1', b'A'), b">>vA".to_vec()),
-            ((b'1', b'0'), b">vA".to_vec()),
-            ((b'1', b'2'), b">A".to_vec()),
-            ((b'1', b'3'), b">>A".to_vec()),
-            ((b'1', b'4'), b"^A".to_vec()),
-            ((b'1', b'5'), b"^>A".to_vec()),
-            ((b'1', b'6'), b"^>>A".to_vec()),
-            ((b'1', b'7'), b"^^A".to_vec()),
-            ((b'1', b'8'), b"^^>A".to_vec()),
-            ((b'1', b'9'), b"^^>>A".to_vec()),
-            ((b'2', b'A'), b">vA".to_vec()),
-            ((b'2', b'0'), b"vA".to_vec()),
-            ((b'2', b'1'), b"<A".to_vec()),
-            ((b'2', b'3'), b">A".to_vec()),
-            ((b'2', b'4'), b"^<A".to_vec()),
-            ((b'2', b'5'), b"^A".to_vec()),
-            ((b'2', b'6'), b"^>A".to_vec()),
-            ((b'2', b'7'), b"^^<A".to_vec()),
-            ((b'2', b'8'), b"^^A".to_vec()),
-            ((b'2', b'9'), b"^^>A".to_vec()),
-            ((b'3', b'A'), b"vA".to_vec()),
-            ((b'3', b'0'), b"v<A".to_vec()),
-            ((b'3', b'1'), b"<<A".to_vec()),
-            ((b'3', b'2'), b"<A".to_vec()),
-            ((b'3', b'4'), b"^<<A".to_vec()),
-            ((b'3', b'5'), b"^<A".to_vec()),
-            ((b'3', b'6'), b"^A".to_vec()),
-            ((b'3', b'7'), b"^^<<A".to_vec()),
-            ((b'3', b'8'), b"^^<A".to_vec()),
-            ((b'3', b'9'), b"^^A".to_vec()),
-            ((b'4', b'A'), b">>vvA".to_vec()),
-            ((b'4', b'0'), b">vvA".to_vec()),
-            ((b'4', b'1'), b"vA".to_vec()),
-            ((b'4', b'2'), b">vA".to_vec()),
-            ((b'4', b'3'), b">>vA".to_vec()),
-            ((b'4', b'5'), b">A".to_vec()),
-            ((b'4', b'6'), b">>A".to_vec()),
-            ((b'4', b'7'), b"^A".to_vec()),
-            ((b'4', b'8'), b"^>A".to_vec()),
-            ((b'5', b'9'), b"^>>A".to_vec()),
-            ((b'5', b'A'), b">vvA".to_vec()),
-            ((b'5', b'0'), b"vvA".to_vec()),
-            ((b'5', b'1'), b"v<A".to_vec()),
-            ((b'5', b'2'), b"vA".to_vec()),
-            ((b'5', b'3'), b">vA".to_vec()),
-            ((b'5', b'4'), b"<A".to_vec()),
-            ((b'5', b'6'), b">A".to_vec()),
-            ((b'5', b'7'), b"^<A".to_vec()),
-            ((b'5', b'8'), b"^A".to_vec()),
-            ((b'5', b'9'), b"^>A".to_vec()),
-            ((b'6', b'A'), b"vvA".to_vec()),
-            ((b'6', b'0'), b"vv<A".to_vec()),
-            ((b'6', b'1'), b"v<<A".to_vec()),
-            ((b'6', b'2'), b"v<A".to_vec()),
-            ((b'6', b'3'), b"vA".to_vec()),
-            ((b'6', b'4'), b"<<A".to_vec()),
-            ((b'6', b'5'), b"<A".to_vec()),
-            ((b'6', b'7'), b"^<<A".to_vec()),
-            ((b'6', b'8'), b"^<A".to_vec()),
-            ((b'6', b'9'), b"^A".to_vec()),
-            ((b'7', b'A'), b">>vvvA".to_vec()),
-            ((b'7', b'0'), b">vvvA".to_vec()),
-            ((b'7', b'1'), b"vvA".to_vec()),
-            ((b'7', b'2'), b">vvA".to_vec()),
-            ((b'7', b'3'), b">>vvA".to_vec()),
-            ((b'7', b'4'), b"vA".to_vec()),
-            ((b'7', b'5'), b">vA".to_vec()),
-            ((b'7', b'6'), b">>vA".to_vec()),
-            ((b'7', b'8'), b">A".to_vec()),
-            ((b'7', b'9'), b">>A".to_vec()),
-            ((b'8', b'A'), b">vvvA".to_vec()),
-            ((b'8', b'0'), b"vvvA".to_vec()),
-            ((b'8', b'1'), b"vv<A".to_vec()),
-            ((b'8', b'2'), b"vvA".to_vec()),
-            ((b'8', b'3'), b">vvA".to_vec()),
-            ((b'8', b'4'), b"v<A".to_vec()),
-            ((b'8', b'5'), b"vA".to_vec()),
-            ((b'8', b'6'), b">vA".to_vec()),
-            ((b'8', b'7'), b"<A".to_vec()),
-            ((b'8', b'9'), b">A".to_vec()),
-            ((b'9', b'A'), b"vvvA".to_vec()),
-            ((b'9', b'0'), b"vvv<A".to_vec()),
-            ((b'9', b'1'), b"vv<<A".to_vec()),
-            ((b'9', b'2'), b"vv<A".to_vec()),
-            ((b'9', b'3'), b"vvA".to_vec()),
-            ((b'9', b'4'), b"v<<A".to_vec()),
-            ((b'9', b'5'), b"v<A".to_vec()),
-            ((b'9', b'6'), b"vA".to_vec()),
-            ((b'9', b'7'), b"<<A".to_vec()),
-            ((b'9', b'8'), b"<A".to_vec()),
-        ]);
-        let dirmov = HashMap::from([
-            ((b'A', b'A'), b"A".to_vec()),
-            ((b'^', b'^'), b"A".to_vec()),
-            ((b'<', b'<'), b"A".to_vec()),
-            ((b'v', b'v'), b"A".to_vec()),
-            ((b'>', b'>'), b"A".to_vec()),
-            ((b'A', b'^'), b"<A".to_vec()),
-            ((b'A', b'>'), b"vA".to_vec()),
-            ((b'A', b'v'), b"v<A".to_vec()),
-            ((b'A', b'<'), b"v<<A".to_vec()),
-            ((b'^', b'A'), b">A".to_vec()),
-            ((b'^', b'>'), b">vA".to_vec()),
-            ((b'^', b'v'), b"vA".to_vec()),
-            ((b'^', b'<'), b"v<A".to_vec()),
-            ((b'<', b'A'), b">>^A".to_vec()),
-            ((b'<', b'^'), b">^A".to_vec()),
-            ((b'<', b'>'), b">>A".to_vec()),
-            ((b'<', b'v'), b">A".to_vec()),
-            ((b'>', b'A'), b"^A".to_vec()),
-            ((b'>', b'^'), b"^<A".to_vec()),
-            ((b'>', b'<'), b"<<A".to_vec()),
-            ((b'>', b'v'), b"<A".to_vec()),
-            ((b'v', b'A'), b">^A".to_vec()),
-            ((b'v', b'^'), b"^A".to_vec()),
-            ((b'v', b'<'), b"<A".to_vec()),
-            ((b'v', b'>'), b">A".to_vec()),
-        ]);
-        for x in xs {
-            let (n, _) = usize::try_search(&x);
-            let n = n.unwrap_or_default();
-            let mut code2 = Vec::new();
-            let mut c = b'A';
-            for d in x {
-                code2.extend(nummov.get(&(c, d)).to_result()?);
-                c = d;
-            }
-            let mut code1 = Vec::new();
-            let mut c = b'A';
-            for &d in code2.iter() {
-                code1.extend(dirmov.get(&(c, d)).to_result()?);
-                c = d;
-            }
-            let mut code0 = Vec::new();
-            let mut c = b'A';
-            for &d in code1.iter() {
-                code0.extend(dirmov.get(&(c, d)).to_result()?);
-                c = d;
-            }
-            println!("{n}");
-            println!("{}", String::from_utf8_lossy(&code2).to_owned());
-            println!("{}", String::from_utf8_lossy(&code1).to_owned());
-            println!("{}", String::from_utf8_lossy(&code0).to_owned());
-            println!("{n} {}", code0.len());
-            sum += n * code0.len();
-        }
-        Ok(sum)
+        // for x in xs {
+        //     let (n, _) = usize::try_search(&x);
+        //     let n = n.unwrap_or_default();
+        //     let mut code2 = Vec::new();
+        //     let mut c = b'A';
+        //     for d in x {
+        //         code2.extend(nummov.get(&(c, d)).to_result()?);
+        //         c = d;
+        //     }
+        //     let mut code1 = Vec::new();
+        //     let mut c = b'A';
+        //     for &d in code2.iter() {
+        //         code1.extend(dirmov.get(&(c, d)).to_result()?);
+        //         c = d;
+        //     }
+        //     let mut code0 = Vec::new();
+        //     let mut c = b'A';
+        //     for &d in code1.iter() {
+        //         code0.extend(dirmov.get(&(c, d)).to_result()?);
+        //         c = d;
+        //     }
+        //     println!("{n}");
+        //     println!("{}", String::from_utf8_lossy(&code2).to_owned());
+        //     println!("{}", String::from_utf8_lossy(&code1).to_owned());
+        //     println!("{}", String::from_utf8_lossy(&code0).to_owned());
+        //     println!("{n} {}", code0.len());
+        //     sum += n * code0.len();
+        // }
+        Ok(0)
     }
 
     fn p2(xs: Self::Input) -> Result<impl Debug> {
@@ -216,14 +92,23 @@ impl Solution for Day21 {
     }
 }
 
-// fn step0(i: i32, j: i32, numpad: &HashMap<u8, (i32, i32)>, dirpad: &HashMap<u8, (i32, i32)>) {
-//     //
-// }
+fn num_step(a: u8, b: u8, steps: u8, cache: &mut HashMap<(u8, u8, u8, u8, u8), usize>) -> usize {
+    let &(i, j) = NUM_PAD.get(&a).unwrap_or(&(0, 0));
+    let &(i2, j2) = NUM_PAD.get(&b).unwrap_or(&(0, 0));
+    // if i == 0 {
+    //     //
+    // }
+    0
+}
 
-// fn step1(i: i32, j: i32, dirpad: &HashMap<u8, (i32, i32)>) {
-//     //
-// }
-
-// fn step2(i: i32, j: i32, dirpad: &HashMap<u8, (i32, i32)>) {
-//     //
-// }
+fn dir_step(a: u8, b: u8, steps: u8, cache: &mut HashMap<(u8, u8, u8, u8, u8), usize>) -> usize {
+    let &(i, j) = DIR_PAD.get(&a).unwrap_or(&(0, 0));
+    let &(i2, j2) = DIR_PAD.get(&b).unwrap_or(&(0, 0));
+    // if let Some(&steps) = cache.get(&(i, j, i2, j2, steps)) {
+    //     steps
+    // } else {
+    //     let mut len = 0;
+    //     len
+    // }
+    0
+}
