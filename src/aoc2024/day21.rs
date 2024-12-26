@@ -43,6 +43,7 @@ impl Solution for Day21 {
 
     fn default_input() -> Result<Vec<u8>> {
         // read_bytes!("inputs/aoc2024/day21.txt")
+        // assert_eq!(num(b'A', b"", 2, &mut HashMap::new()), 2);
         if false {
             br"3A".to_vec().ok()
         } else {
@@ -68,7 +69,7 @@ impl Solution for Day21 {
             let n = n.unwrap_or_default();
             let len = num(b'A', &x, 2, &mut cache);
             println!("{n} {len}");
-            sum += n * len;
+            sum += n * len.len();
         }
         let mut entries = cache
             .iter()
@@ -88,16 +89,20 @@ impl Solution for Day21 {
             let (n, _) = usize::try_search(&x);
             let n = n.unwrap_or_default();
             let len = num(b'A', &x, 24, &mut cache);
-            sum += n * len;
+            sum += n * len.len();
         }
         Ok(sum)
     }
 }
 
-fn num(a: u8, bs: &[u8], steps: u8, cache: &mut HashMap<(u8, u8, u8), usize>) -> usize {
+fn num(a: u8, bs: &[u8], steps: u8, cache: &mut HashMap<(u8, u8, u8), String>) -> String {
     match bs {
-        [b, bs @ ..] => num_step(a, *b, steps, cache) + num(*b, bs, steps, cache),
-        _ => 0,
+        [b, bs @ ..] => format!(
+            "{}{}",
+            num_step(a, *b, steps, cache),
+            num(*b, bs, steps, cache)
+        ),
+        _ => String::from(""),
     }
 }
 
@@ -111,11 +116,11 @@ fn legal_num_step(dir: u8, i: u8, j: u8, i2: u8, j2: u8) -> bool {
     }
 }
 
-fn num_step(a: u8, b: u8, steps: u8, cache: &mut HashMap<(u8, u8, u8), usize>) -> usize {
+fn num_step(a: u8, b: u8, steps: u8, cache: &mut HashMap<(u8, u8, u8), String>) -> String {
     let &(i, j) = NUM_PAD.get(&a).unwrap();
     let &(i2, j2) = NUM_PAD.get(&b).unwrap();
-    let vec1 = (if i > i2 { b'<' } else { b'>' }, i.abs_diff(i2));
-    let vec2 = (if j > j2 { b'^' } else { b'v' }, j.abs_diff(j2));
+    let vec1 = (if i > i2 { b'^' } else { b'v' }, i.abs_diff(i2));
+    let vec2 = (if j > j2 { b'<' } else { b'>' }, j.abs_diff(j2));
     let len = vec![(vec1, vec2), (vec2, vec1)]
         .into_iter()
         .filter(|&((dir1, len1), _)| legal_num_step(dir1, i, j, i2, j2) && len1 != 0)
@@ -126,7 +131,7 @@ fn num_step(a: u8, b: u8, steps: u8, cache: &mut HashMap<(u8, u8, u8), usize>) -
                 .chain(Some(b'A'))
                 .collect_vec();
             let ret = dir(b'A', &new_s, steps, cache);
-            println!(" ### {ret} {}", String::from_utf8_lossy(&new_s));
+            // println!(" ### {ret} {}", String::from_utf8_lossy(&new_s));
             // println!(
             //     " ### {ret} {} {} {len1} {} {len2} {i},{j} {i2},{j2}",
             //     String::from_utf8_lossy(&new_s),
@@ -135,16 +140,20 @@ fn num_step(a: u8, b: u8, steps: u8, cache: &mut HashMap<(u8, u8, u8), usize>) -
             // );
             ret
         })
-        .min()
+        .min_by(|a, b| usize::cmp(&a.len(), &b.len()))
         .unwrap();
-    println!("{} {} {len}", a as char, b as char);
+    // println!("{} {} {len}", a as char, b as char);
     len
 }
 
-fn dir(a: u8, bs: &[u8], steps: u8, cache: &mut HashMap<(u8, u8, u8), usize>) -> usize {
+fn dir(a: u8, bs: &[u8], steps: u8, cache: &mut HashMap<(u8, u8, u8), String>) -> String {
     match bs {
-        [b, bs @ ..] => dir_step(a, *b, steps, cache) + dir(*b, bs, steps, cache),
-        _ => 0,
+        [b, bs @ ..] => format!(
+            "{}{}",
+            dir_step(a, *b, steps, cache),
+            dir(*b, bs, steps, cache)
+        ),
+        _ => String::from(""),
     }
 }
 
@@ -158,18 +167,19 @@ fn legal_dir_step(dir: u8, i: u8, j: u8, i2: u8, j2: u8) -> bool {
     }
 }
 
-fn dir_step(a: u8, b: u8, steps: u8, cache: &mut HashMap<(u8, u8, u8), usize>) -> usize {
-    if steps == 1 {
-        let &(i, j) = DIR_PAD.get(&a).unwrap();
-        let &(i2, j2) = DIR_PAD.get(&b).unwrap();
-        return (i.abs_diff(i2) + j.abs_diff(j2) + 1) as _;
-    } else if let Some(&len) = cache.get(&(a, b, steps)) {
-        return len;
+fn dir_step(a: u8, b: u8, steps: u8, cache: &mut HashMap<(u8, u8, u8), String>) -> String {
+    if steps == 0 {
+        return String::from_utf8_lossy(&[a]).to_string();
+        // let &(i, j) = DIR_PAD.get(&a).unwrap();
+        // let &(i2, j2) = DIR_PAD.get(&b).unwrap();
+        // return (i.abs_diff(i2) + j.abs_diff(j2) + 1) as _;
+    } else if let Some(len) = cache.get(&(a, b, steps)) {
+        return len.clone();
     }
     let &(i, j) = DIR_PAD.get(&a).unwrap();
     let &(i2, j2) = DIR_PAD.get(&b).unwrap();
-    let vec1 = (if i > i2 { b'<' } else { b'>' }, i.abs_diff(i2));
-    let vec2 = (if j > j2 { b'^' } else { b'v' }, j.abs_diff(j2));
+    let vec1 = (if i > i2 { b'^' } else { b'v' }, i.abs_diff(i2));
+    let vec2 = (if j > j2 { b'<' } else { b'>' }, j.abs_diff(j2));
     let len = vec![(vec1, vec2), (vec2, vec1)]
         .into_iter()
         .filter(|&((dir1, len1), (_, len2))| {
@@ -191,7 +201,7 @@ fn dir_step(a: u8, b: u8, steps: u8, cache: &mut HashMap<(u8, u8, u8), usize>) -
                 .chain(Some(b'A'))
                 .collect_vec();
             let ret = dir(b'A', &new_s, steps - 1, cache);
-            println!("{steps}>>> {ret} {}", String::from_utf8_lossy(&new_s));
+            // println!("{steps}>>> {ret} {}", String::from_utf8_lossy(&new_s));
             // println!(
             //     "{steps}>>> {ret} {} {} {len1} {} {len2} {i},{j} {i2},{j2}",
             //     String::from_utf8_lossy(&new_s),
@@ -200,11 +210,11 @@ fn dir_step(a: u8, b: u8, steps: u8, cache: &mut HashMap<(u8, u8, u8), usize>) -
             // );
             ret
         })
-        .min()
+        .min_by(|a, b| usize::cmp(&a.len(), &b.len()))
         .unwrap();
     // if steps == 1 {
     //     println!("ab {len} {}", i.abs_diff(i2) + j.abs_diff(j2) + 1);
     // }
-    cache.insert((a, b, steps), len);
+    cache.insert((a, b, steps), len.clone());
     len
 }
